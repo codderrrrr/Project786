@@ -1,0 +1,71 @@
+# Tool-generated directories
+.VSCodeCounter/
+.freebuff/
+.metadata
+.opencode/
+
+# Web target is not used for this app — mobile only.
+web/
+
+# Flutter tools
+.dart_tool/
+.flutter-plugins-dependencies
+.flutter-plugins
+.dart_tool_symlink
+
+# Generated code
+build/
+
+# Flutter build output
+.build/
+.flutter-plugins-dependencies
+
+# Sound null safety
+.dart_tool/.analysis_options
+
+# Keystore files
+*.keystore
+
+# IDEs
+/.idea/
+/.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local configuration
+.env*
+*.env
+
+# Pub cache
+.dart_tool/package_config.json
+
+# flutter packages get
+.packages
+
+# Android/iOS build artifacts
+android/gradlew
+android/app/Build/
+android/app/intermediates/
+android/app/build/
+ios/Flutter/App.framework/
+ios/Flutter/ephemeral/
+
+# Sound null safety migration
+**/*.dart.lib.json
+
+# Auto-generated files from build_runner
+.generated/
+
+# Flutter test reports
+test/**/.dart_tool/
+
+# Coverage reports
+coverage/
+
+# flutter_test pub cache
+.flutter_test/
+
+# Fastlane
+fastlane/
