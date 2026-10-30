@@ -6,8 +6,6 @@ import 'package:subscription_saas_flutter/core/widgets/app_scaffold.dart';
 import 'package:subscription_saas_flutter/core/widgets/dialogs.dart';
 import 'package:subscription_saas_flutter/core/widgets/glass_card.dart';
 import 'package:subscription_saas_flutter/core/widgets/section_header.dart';
-import 'package:subscription_saas_flutter/core/widgets/creative/aurora_card.dart';
-import 'package:subscription_saas_flutter/core/widgets/creative/section_header_artistic.dart';
 
 /// Business profile screen showing business details.
 /// Features per review guidelines:
@@ -85,7 +83,8 @@ class _BusinessScreenState extends State<BusinessScreen> {
         children: [
           const SectionHeader(title: 'Identity'),
 
-          // Username field
+          // Identity fields live in one panel: they are one subject, and four
+          // floating boxes for four lines of a form read as clutter.
           GlassCard(
             child: Column(
               children: [
@@ -99,14 +98,6 @@ class _BusinessScreenState extends State<BusinessScreen> {
                   onChanged: (_) => setState(() {}),
                 ),
                 const SizedBox(height: 14),
-              ],
-            ),
-          ),
-
-          // Business name
-          GlassCard(
-            child: Column(
-              children: [
                 TextField(
                   controller: _nameController,
                   textCapitalization: TextCapitalization.words,
@@ -118,16 +109,9 @@ class _BusinessScreenState extends State<BusinessScreen> {
                   onChanged: (_) => setState(() {}),
                 ),
                 const SizedBox(height: 14),
-              ],
-            ),
-          ),
-
-          // Owner name
-          GlassCard(
-            child: Column(
-              children: [
                 TextField(
                   controller: _ownerController,
+                  textCapitalization: TextCapitalization.words,
                   decoration: const InputDecoration(
                     labelText: 'Owner name',
                     prefixIcon: Icon(Icons.person_outlined),
@@ -135,27 +119,31 @@ class _BusinessScreenState extends State<BusinessScreen> {
                   ),
                   onChanged: (_) => setState(() {}),
                 ),
-                const SizedBox(height: 14),
               ],
             ),
           ),
+          const SizedBox(height: 22),
+          const SectionHeader(title: 'Contact'),
 
-          // Location - Pakistan cities dropdown
+          // Location + email: pickers stay tappable rows; optional email
+          // labelled once (the ListTile header duplicated the field label).
           GlassCard(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ListTile(
+                  contentPadding: EdgeInsets.zero,
                   leading: const Icon(Icons.location_on_outlined),
                   title: const Text('Location'),
-                  subtitle: _selectedCity != null
-                      ? Text(_selectedCity!)
-                      : const Text('Select city'),
-                  trailing: const Icon(Icons.arrow_drop_down),
+                  subtitle: Text(
+                    _selectedCity ?? 'Select a city from the list',
+                  ),
+                  trailing: const Icon(Icons.arrow_drop_down, size: 28),
                   onTap: () {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: const Text('Select Location'),
+                        title: const Text('Select location'),
                         content: SingleChildScrollView(
                           child: ListBody(
                             children: _pakistanCities
@@ -177,43 +165,12 @@ class _BusinessScreenState extends State<BusinessScreen> {
                             onPressed: () => Navigator.of(context).pop(),
                             child: const Text('Cancel'),
                           ),
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text('Done'),
-                          ),
                         ],
                       ),
                     );
                   },
                 ),
-                if (_selectedCity != null) ...[
-                  const Divider(height: 1),
-                  Text(
-                    'Selected: $_selectedCity',
-                    style: AppType.caption.copyWith(color: AppColors.primary),
-                  ),
-                ],
-                const SizedBox(height: 14),
-              ],
-            ),
-          ),
-
-          // Email (optional)
-          GlassCard(
-            child: Column(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.email_outlined),
-                  title: const Text('Email'),
-                  subtitle: const Text(
-                    'Optional - for receipts and communications',
-                  ),
-                  trailing: Icon(
-                    Icons.arrow_forward_ios,
-                    size: 12,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
+                const Divider(height: 24),
                 TextField(
                   controller: _emailController,
                   decoration: const InputDecoration(
@@ -224,7 +181,13 @@ class _BusinessScreenState extends State<BusinessScreen> {
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (_) => setState(() {}),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 4),
+                Text(
+                  'Used on receipts and reminders when provided.',
+                  style: AppType.caption.copyWith(
+                    color: AppColors.textTertiary,
+                  ),
+                ),
               ],
             ),
           ),
@@ -233,7 +196,7 @@ class _BusinessScreenState extends State<BusinessScreen> {
           Container(
             width: double.infinity,
             margin: const EdgeInsets.only(top: 24),
-            child: ElevatedButton(
+            child: FilledButton(
               onPressed: _isSaving ? null : _save,
               child: _isSaving
                   ? const SizedBox(

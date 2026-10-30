@@ -11,6 +11,10 @@ import 'package:subscription_saas_flutter/core/widgets/dialogs.dart';
 import 'package:subscription_saas_flutter/core/widgets/initials_avatar.dart';
 import 'package:subscription_saas_flutter/core/widgets/section_header.dart';
 import 'package:subscription_saas_flutter/core/widgets/state_widgets.dart';
+import 'package:subscription_saas_flutter/core/money/money.dart';
+import 'package:subscription_saas_flutter/features/subscriptions/domain/models/subscription.dart';
+import 'package:subscription_saas_flutter/features/payments/domain/models/payment.dart';
+import 'package:subscription_saas_flutter/features/payments/domain/models/payment_item.dart';
 import 'package:subscription_saas_flutter/core/widgets/status_pill.dart';
 import 'package:subscription_saas_flutter/core/widgets/surface_rows.dart';
 import 'package:subscription_saas_flutter/features/payments/data/providers/payments_providers.dart';
@@ -301,15 +305,24 @@ class _SubscriptionsTab extends ConsumerWidget {
 class _SubscriptionItem extends ConsumerWidget {
   const _SubscriptionItem({required this.subscription});
 
-  final dynamic subscription;
+  final Subscription subscription;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final period = switch (subscription.billingPeriod) {
+      'monthly' => 'monthly',
+      'yearly' => 'yearly',
+      'weekly' => 'weekly',
+      'daily' => 'daily',
+      _ => subscription.billingPeriod,
+    };
     return SurfaceRow(
-      title: subscription.name,
-      subtitle: '\$${subscription.price.toStringAsFixed(2)}',
+      title: period[0].toUpperCase() + period.substring(1) + ' service',
+      subtitle:
+          'PKR ${MoneyUtils.formatPKR(subscription.price)} · next due ${subscription.nextPaymentDate}',
       showChevron: true,
       onTap: () => context.push('/subscriptions/${subscription.id}'),
+      trailing: StatusPill.fromStatus(subscription.status),
     );
   }
 }
@@ -355,15 +368,25 @@ class _PaymentsTab extends ConsumerWidget {
 class _PaymentItem extends ConsumerWidget {
   const _PaymentItem({required this.payment});
 
-  final dynamic payment;
+  final Payment payment;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final services = payment.items
+        .map((PaymentItem i) => i.serviceName)
+        .toList();
+    final title = services.isEmpty
+        ? 'Payment'
+        : services.length == 1
+        ? services.first
+        : '${services.length} services';
     return SurfaceRow(
-      title: payment.description,
-      subtitle: '\$${payment.amount.toStringAsFixed(2)}',
+      title: title,
+      subtitle:
+          '${payment.paymentDate} · PKR ${MoneyUtils.formatPKR(payment.finalAmount)}',
       showChevron: true,
       onTap: () => context.push('/payments/${payment.id}'),
+      trailing: StatusPill.fromStatus(payment.status),
     );
   }
 }

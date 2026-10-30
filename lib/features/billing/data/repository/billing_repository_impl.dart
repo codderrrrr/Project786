@@ -8,7 +8,15 @@ class BillingRepositoryImpl implements BillingRepository {
   BillingRepositoryImpl(this.datasource);
 
   @override
-  Future<CursorPage<Obligation>> listObligations({String? cursor, int limit = 20, String? status}) {
-    return datasource.listObligations(cursor: cursor, limit: limit, status: status);
+  Future<CursorPage<Obligation>> listObligations({
+    String? cursor,
+    int limit = 20,
+    String? status,
+  }) {
+    return datasource.listObligations(
+      cursor: cursor,
+      limit: limit,
+      status: status,
+    );
   }
 }

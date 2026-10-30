@@ -40,18 +40,20 @@ class DummyBillingData {
         final sv = services.where((x) => x.id == e.serviceId).firstOrNull;
         return sv?.name ?? e.serviceId;
       }).toList();
-      obs.add(Obligation(
-        id: 'obl_${idx + 1}',
-        subscriberId: sid,
-        subscriberName: subName,
-        subscriptionIds: list.map<String>((e) => e.id).toList(),
-        serviceNames: serviceNames,
-        amountDue: total,
-        dueDate: dueDate,
-        status: daysOverdue > 0 ? 'overdue' : 'due',
-        daysOverdue: daysOverdue,
-        daysDue: daysDue,
-      ));
+      obs.add(
+        Obligation(
+          id: 'obl_${idx + 1}',
+          subscriberId: sid,
+          subscriberName: subName,
+          subscriptionIds: list.map<String>((e) => e.id).toList(),
+          serviceNames: serviceNames,
+          amountDue: total,
+          dueDate: dueDate,
+          status: daysOverdue > 0 ? 'overdue' : 'due',
+          daysOverdue: daysOverdue,
+          daysDue: daysDue,
+        ),
+      );
       idx++;
     }
     return obs;

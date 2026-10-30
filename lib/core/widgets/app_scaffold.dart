@@ -5,7 +5,6 @@ import 'package:subscription_saas_flutter/app/theme/app_colors.dart';
 import 'package:subscription_saas_flutter/app/theme/app_radii.dart';
 import 'package:subscription_saas_flutter/app/theme/app_type.dart';
 
-import 'app_background.dart';
 import 'pressable.dart';
 
 /// Screen frame used by every page: flat canvas, a compact title row, and an
@@ -52,8 +51,10 @@ class AppScaffold extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBody: true,
-      body: AuroraBackground(
-        intensity: backgroundIntensity,
+      body: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+        ),
         child: SafeArea(
           bottom: false,
           child: Column(

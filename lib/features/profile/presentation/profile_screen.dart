@@ -78,7 +78,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(_name.text, style: AppType.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+                      Text(
+                        _name.text,
+                        style: AppType.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       const SizedBox(height: 4),
                       Text('Owner · Demo Business', style: AppType.caption),
                     ],
@@ -134,12 +139,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: InputDecoration(
                     labelText: 'New password',
                     prefixIcon: const Icon(Icons.lock_reset_rounded),
-                    helperText: 'At least 8 characters, with a number and a symbol',
+                    helperText:
+                        'At least 8 characters, with a number and a symbol',
                     suffixIcon: IconButton(
-                      tooltip: _showPassword ? 'Hide passwords' : 'Show passwords',
-                      onPressed: () => setState(() => _showPassword = !_showPassword),
+                      tooltip: _showPassword
+                          ? 'Hide passwords'
+                          : 'Show passwords',
+                      onPressed: () =>
+                          setState(() => _showPassword = !_showPassword),
                       icon: Icon(
-                        _showPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                        _showPassword
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
                         size: 18,
                       ),
                     ),
@@ -159,7 +170,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: 8),
                 Text(
                   _strengthLabel,
-                  style: AppType.overline.copyWith(letterSpacing: 0.2, color: _strengthColor),
+                  style: AppType.overline.copyWith(
+                    letterSpacing: 0.2,
+                    color: _strengthColor,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 SizedBox(

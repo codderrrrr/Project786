@@ -17,10 +17,46 @@ class DummySubscriptionsStore {
     String shift(int days) =>
         DateTime(t.year, t.month, t.day + days).toIso8601String().split('T')[0];
     return [
-      Subscription(id: 'subscr_001', subscriberId: 'sub_001', serviceId: 'svc_001', status: 'active', price: Decimal.parse('1000.00'), billingPeriod: 'monthly', startDate: today, nextPaymentDate: shift(-5)),
-      Subscription(id: 'subscr_002', subscriberId: 'sub_001', serviceId: 'svc_002', status: 'active', price: Decimal.parse('2500.00'), billingPeriod: 'monthly', startDate: today, nextPaymentDate: shift(-5)),
-      Subscription(id: 'subscr_003', subscriberId: 'sub_002', serviceId: 'svc_001', status: 'active', price: Decimal.parse('1000.00'), billingPeriod: 'monthly', startDate: today, nextPaymentDate: shift(2)),
-      Subscription(id: 'subscr_004', subscriberId: 'sub_003', serviceId: 'svc_003', status: 'active', price: Decimal.parse('500.00'), billingPeriod: 'one_time', startDate: today, nextPaymentDate: today),
+      Subscription(
+        id: 'subscr_001',
+        subscriberId: 'sub_001',
+        serviceId: 'svc_001',
+        status: 'active',
+        price: Decimal.parse('1000.00'),
+        billingPeriod: 'monthly',
+        startDate: today,
+        nextPaymentDate: shift(-5),
+      ),
+      Subscription(
+        id: 'subscr_002',
+        subscriberId: 'sub_001',
+        serviceId: 'svc_002',
+        status: 'active',
+        price: Decimal.parse('2500.00'),
+        billingPeriod: 'monthly',
+        startDate: today,
+        nextPaymentDate: shift(-5),
+      ),
+      Subscription(
+        id: 'subscr_003',
+        subscriberId: 'sub_002',
+        serviceId: 'svc_001',
+        status: 'active',
+        price: Decimal.parse('1000.00'),
+        billingPeriod: 'monthly',
+        startDate: today,
+        nextPaymentDate: shift(2),
+      ),
+      Subscription(
+        id: 'subscr_004',
+        subscriberId: 'sub_003',
+        serviceId: 'svc_003',
+        status: 'active',
+        price: Decimal.parse('500.00'),
+        billingPeriod: 'one_time',
+        startDate: today,
+        nextPaymentDate: today,
+      ),
     ];
   }
 

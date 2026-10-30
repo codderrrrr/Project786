@@ -96,8 +96,7 @@ class ServiceDetailScreen extends ConsumerWidget {
                 children: [
                   SurfaceRow(
                     title: s.active ? 'Deactivate service' : 'Activate service',
-                    subtitle:
-                        'Deactivating stops new subscriptions; existing ones keep price and history.',
+                    subtitle: 'Deactivating stops new subscriptions; existing ones keep price and history.',
                     showChevron: false,
                     onTap: () async {
                       if (s.active) {
@@ -111,13 +110,17 @@ class ServiceDetailScreen extends ConsumerWidget {
                         );
                         if (!ok) return;
                       }
-                      await ref.read(servicesRepositoryProvider).setServiceActive(s.id, !s.active);
+                      await ref
+                          .read(servicesRepositoryProvider)
+                          .setServiceActive(s.id, !s.active);
                       ref.invalidate(servicesListProvider);
                       ref.invalidate(serviceDetailProvider(s.id));
                       if (context.mounted) {
                         showAppSnack(
                           context,
-                          message: s.active ? '${s.name} deactivated.' : '${s.name} activated.',
+                          message: s.active
+                              ? '${s.name} deactivated.'
+                              : '${s.name} activated.',
                         );
                       }
                     },

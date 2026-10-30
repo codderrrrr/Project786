@@ -14,10 +14,34 @@ class DummySubscribersStore {
   static List<Subscriber> _seed() {
     final today = BizDate.todayYMD();
     return [
-       Subscriber(id: 'sub_001', name: 'Alice Khan', phone: '+923001111111', active: true, createdAt: today),
-       Subscriber(id: 'sub_002', name: 'Bilal Ahmed', phone: '+923002222222', active: true, createdAt: today),
-       Subscriber(id: 'sub_003', name: 'Chaudhry Saad', phone: '+923003333333', active: true, createdAt: today),
-       Subscriber(id: 'sub_004', name: 'Dina Farooq', phone: '+923004444444', active: false, createdAt: today),
+      Subscriber(
+        id: 'sub_001',
+        name: 'Alice Khan',
+        phone: '+923001111111',
+        active: true,
+        createdAt: today,
+      ),
+      Subscriber(
+        id: 'sub_002',
+        name: 'Bilal Ahmed',
+        phone: '+923002222222',
+        active: true,
+        createdAt: today,
+      ),
+      Subscriber(
+        id: 'sub_003',
+        name: 'Chaudhry Saad',
+        phone: '+923003333333',
+        active: true,
+        createdAt: today,
+      ),
+      Subscriber(
+        id: 'sub_004',
+        name: 'Dina Farooq',
+        phone: '+923004444444',
+        active: false,
+        createdAt: today,
+      ),
     ];
   }
 
@@ -56,7 +80,7 @@ class DummySubscribersStore {
       id: current.id,
       name: current.name,
       phone: current.phone,
-       cnic: current.cnic,
+      cnic: current.cnic,
       active: active,
       createdAt: current.createdAt,
     );

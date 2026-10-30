@@ -8,7 +8,11 @@ import 'package:subscription_saas_flutter/features/payments/domain/models/paymen
 import 'package:subscription_saas_flutter/features/payments/domain/models/payment_item.dart';
 
 class DummyPaymentsDatasource {
-  Future<CursorPage<Payment>> listPayments({String? cursor, int limit = 20, String? subscriberId}) async {
+  Future<CursorPage<Payment>> listPayments({
+    String? cursor,
+    int limit = 20,
+    String? subscriberId,
+  }) async {
     await Future.delayed(const Duration(milliseconds: 150));
     final all = DummyPaymentsStore.all();
     var filtered = all;
@@ -16,8 +20,12 @@ class DummyPaymentsDatasource {
       filtered = all.where((e) => e.subscriberId == subscriberId).toList();
     }
     final offset = CursorUtils.decode(cursor);
-    final end = (offset + limit) > filtered.length ? filtered.length : (offset + limit);
-    final items = offset >= filtered.length ? <Payment>[] : filtered.sublist(offset, end);
+    final end = (offset + limit) > filtered.length
+        ? filtered.length
+        : (offset + limit);
+    final items = offset >= filtered.length
+        ? <Payment>[]
+        : filtered.sublist(offset, end);
     final next = end < filtered.length ? CursorUtils.encode(end) : null;
     return CursorPage(items: items, nextCursor: next, hasMore: next != null);
   }
@@ -41,7 +49,9 @@ class DummyPaymentsDatasource {
   }) async {
     await Future.delayed(const Duration(milliseconds: 300));
     final subs = DummySubscribersStore.all();
-    final subName = subs.firstWhere((x) => x.id == subscriberId, orElse: () => subs.first).name;
+    final subName = subs
+        .firstWhere((x) => x.id == subscriberId, orElse: () => subs.first)
+        .name;
     final today = BizDate.todayYMD();
     final payment = Payment(
       id: 'pay_${DateTime.now().microsecondsSinceEpoch}',

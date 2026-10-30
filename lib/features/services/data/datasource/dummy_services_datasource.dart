@@ -5,7 +5,10 @@ import 'package:subscription_saas_flutter/features/services/data/datasource/dumm
 import 'package:subscription_saas_flutter/features/services/domain/models/service.dart';
 
 class DummyServicesDatasource {
-  Future<CursorPage<Service>> listServices({String? cursor, int limit = 20}) async {
+  Future<CursorPage<Service>> listServices({
+    String? cursor,
+    int limit = 20,
+  }) async {
     await Future.delayed(const Duration(milliseconds: 150));
     final all = DummyServicesStore.all();
     final offset = CursorUtils.decode(cursor);

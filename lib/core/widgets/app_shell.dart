@@ -376,7 +376,7 @@ class _FloatingNavBar extends StatelessWidget {
       child: ClipRRect(
         borderRadius: AppRadii.rXl,
         child: BackdropFilter(
-          filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+          filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: AppColors.surface.withValues(alpha: AppColors.isDark ? 0.84 : 0.94),
@@ -385,8 +385,8 @@ class _FloatingNavBar extends StatelessWidget {
               boxShadow: [
                 BoxShadow(
                   color: AppColors.shadow.withValues(alpha: 0.22),
-                  blurRadius: 28,
-                  offset: const Offset(0, 10),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
@@ -442,16 +442,14 @@ class _NavBarItem extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
           decoration: BoxDecoration(
             color: selected ? AppColors.primary.withValues(alpha: 0.10) : Colors.transparent,
-            gradient: selected
-                ? LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      AppColors.primary.withValues(alpha: 0.12),
-                      AppColors.primary.withValues(alpha: 0.06),
-                    ],
-                  )
-                : null,
+            gradient: selected ? LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppColors.primary.withValues(alpha: 0.10),
+                AppColors.primary.withValues(alpha: 0.05),
+              ],
+            ) : null,
             borderRadius: AppRadii.rLg,
             border: selected
                 ? Border.all(color: AppColors.primary.withValues(alpha: 0.22))

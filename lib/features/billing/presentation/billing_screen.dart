@@ -8,12 +8,9 @@ import 'package:subscription_saas_flutter/core/widgets/app_scaffold.dart';
 import 'package:subscription_saas_flutter/core/widgets/filter_bar.dart';
 import 'package:subscription_saas_flutter/core/widgets/search_field.dart';
 import 'package:subscription_saas_flutter/core/widgets/section_header.dart';
-import 'package:subscription_saas_flutter/core/widgets/creative/section_header_artistic.dart';
 import 'package:subscription_saas_flutter/core/widgets/state_widgets.dart';
 import 'package:subscription_saas_flutter/core/widgets/surface_rows.dart';
-import 'package:subscription_saas_flutter/core/widgets/creative/aurora_card.dart';
-import 'package:subscription_saas_flutter/core/widgets/creative/minimal_card.dart';
-import 'package:subscription_saas_flutter/core/widgets/creative/gradient_chip.dart';
+import 'package:subscription_saas_flutter/core/components/surface_card.dart';
 import 'package:subscription_saas_flutter/features/billing/data/providers/billing_providers.dart';
 import 'package:subscription_saas_flutter/features/billing/domain/models/obligation.dart';
 
@@ -39,7 +36,9 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
     if (query.trim().isEmpty) return true;
     final needle = query.trim().toLowerCase();
     return obligation.subscriberName.toLowerCase().contains(needle) ||
-        obligation.serviceNames.any((service) => service.toLowerCase().contains(needle));
+        obligation.serviceNames.any(
+          (service) => service.toLowerCase().contains(needle),
+        );
   }
 
   @override
@@ -69,30 +68,28 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
           // - Overdue: one week prior to today
           // - Due today: due today
           // - Upcoming: one week after today
-          final overdueItems = page.items
-              .where((o) => o.status == 'overdue')
-              .toList()
-            ..sort((a, b) => b.daysOverdue.compareTo(a.daysOverdue));
+          final overdueItems =
+              page.items.where((o) => o.status == 'overdue').toList()
+                ..sort((a, b) => b.daysOverdue.compareTo(a.daysOverdue));
           final dueTodayItems = page.items
-              .where((o) =>
-                  o.status != 'overdue' && o.daysDue == 0)
+              .where((o) => o.status != 'overdue' && o.daysDue == 0)
               .toList();
           final upcomingItems = page.items
-              .where((o) =>
-                  o.status != 'overdue' &&
-                  o.daysDue > 0 &&
-                  o.daysDue <= 7)
+              .where(
+                (o) => o.status != 'overdue' && o.daysDue > 0 && o.daysDue <= 7,
+              )
               .toList();
           final allItems = List.of(page.items);
 
           // Apply search filter
           final filteredItems = _query.isNotEmpty
               ? allItems
-                  .where((o) =>
-                      o.subscriberName
-                          .toLowerCase()
-                          .contains(_query.toLowerCase()))
-              .toList()
+                    .where(
+                      (o) => o.subscriberName.toLowerCase().contains(
+                        _query.toLowerCase(),
+                      ),
+                    )
+                    .toList()
               : allItems;
 
           final visibleOverdueItems = overdueItems
@@ -109,10 +106,10 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
           final filtered = _filter == 'all'
               ? filteredItems
               : _filter == 'overdue'
-                  ? visibleOverdueItems
-                  : _filter == 'today'
-                      ? visibleDueTodayItems
-                      : visibleUpcomingItems;
+              ? visibleOverdueItems
+              : _filter == 'today'
+              ? visibleDueTodayItems
+              : visibleUpcomingItems;
 
           // Compute group headings
           final overdueCount = visibleOverdueItems.length;
@@ -124,8 +121,13 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
             children: [
               // Search bar
               Padding(
-                padding: const EdgeInsets.fromLTRB(Gap.gutter, Gap.gutter, Gap.gutter, 8),
-                child: MinimalCard(
+                padding: const EdgeInsets.fromLTRB(
+                  Gap.gutter,
+                  Gap.gutter,
+                  Gap.gutter,
+                  8,
+                ),
+                child: SurfaceCard(
                   padding: const EdgeInsets.all(8),
                   child: AppSearchField(
                     hintText: 'Search name or phone number',
@@ -136,10 +138,15 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
 
               // Filter bar with 3 filters + All
               Padding(
-                padding: const EdgeInsets.fromLTRB(Gap.gutter, 0, Gap.gutter, 4),
-                child: AuroraCard(
+                padding: const EdgeInsets.fromLTRB(
+                  Gap.gutter,
+                  0,
+                  Gap.gutter,
+                  4,
+                ),
+                child: SurfaceCard(
                   padding: const EdgeInsets.all(8),
-                  glow: true,
+
                   child: FilterBar(
                     selectedId: _filter,
                     semanticLabel: 'Filter obligations by urgency',
@@ -149,7 +156,11 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
                       '${filtered.length} ${filtered.length == 1 ? 'record' : 'records'}',
                     ),
                     options: [
-                      FilterOption(id: 'all', label: 'All', count: allItems.length),
+                      FilterOption(
+                        id: 'all',
+                        label: 'All',
+                        count: allItems.length,
+                      ),
                       FilterOption(
                         id: 'overdue',
                         label: 'Overdue ($overdueCount)',
@@ -176,8 +187,9 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
                   padding: Gap.pageInset,
                   children: [
                     // Overdue section
-                    if (visibleOverdueItems.isNotEmpty && (_filter == 'all' || _filter == 'overdue')) ...[
-                      SectionHeaderArtistic(
+                    if (visibleOverdueItems.isNotEmpty &&
+                        (_filter == 'all' || _filter == 'overdue')) ...[
+                      SectionHeader(
                         title: 'Overdue',
                         subtitle: 'One week prior to today',
                       ),
@@ -198,10 +210,7 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
                     // Due today section
                     if (visibleDueTodayItems.isNotEmpty &&
                         (_filter == 'all' || _filter == 'today')) ...[
-                      SectionHeaderArtistic(
-                        title: 'Due today',
-                        subtitle: 'Due today',
-                      ),
+                      SectionHeader(title: 'Due today', subtitle: 'Due today'),
                       SurfaceSection(
                         children: [
                           for (final o in visibleDueTodayItems)
@@ -219,7 +228,7 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
                     // Upcoming section
                     if (visibleUpcomingItems.isNotEmpty &&
                         (_filter == 'all' || _filter == 'upcoming')) ...[
-                      SectionHeaderArtistic(
+                      SectionHeader(
                         title: 'Upcoming',
                         subtitle: 'One week after today',
                       ),
@@ -260,10 +269,7 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
 
 /// A row displaying a billing obligation with collect action.
 class _ObligationRow extends ConsumerWidget {
-  const _ObligationRow({
-    required this.obligation,
-    required this.onCollect,
-  });
+  const _ObligationRow({required this.obligation, required this.onCollect});
 
   final Obligation obligation;
   final VoidCallback onCollect;
@@ -275,7 +281,8 @@ class _ObligationRow extends ConsumerWidget {
 
     return SurfaceRow(
       title: obligation.subscriberName,
-      subtitle: '${MoneyUtils.formatPKR(obligation.amountDue)} '
+      subtitle:
+          '${MoneyUtils.formatPKR(obligation.amountDue)} '
           '${isOverdue ? '($days days overdue)' : 'due ${obligation.daysDue} days'}',
       showChevron: true,
       onTap: onCollect,

@@ -12,7 +12,7 @@ import 'package:subscription_saas_flutter/core/widgets/filter_bar.dart';
 import 'package:subscription_saas_flutter/core/widgets/search_field.dart';
 import 'package:subscription_saas_flutter/core/widgets/state_widgets.dart';
 import 'package:subscription_saas_flutter/core/widgets/surface_rows.dart';
-import 'package:subscription_saas_flutter/core/widgets/creative/aurora_card.dart';
+import 'package:subscription_saas_flutter/core/components/surface_card.dart';
 import 'package:subscription_saas_flutter/features/services/data/providers/services_providers.dart';
 import 'package:subscription_saas_flutter/features/services/domain/models/service.dart';
 
@@ -67,19 +67,25 @@ class _ServicesScreenState extends ConsumerState<ServicesScreen> {
           // Apply search filter
           final filtered = _query.isNotEmpty
               ? items
-                  .where((s) =>
-                      s.name.toLowerCase().contains(_query.toLowerCase()))
-              .toList()
+                    .where(
+                      (s) =>
+                          s.name.toLowerCase().contains(_query.toLowerCase()),
+                    )
+                    .toList()
               : items;
 
           // Apply filter selection
           final filteredByStatus = _filter == 'all'
               ? filtered
-              : filtered.where((s) => s.active == (_filter == 'active')).toList();
+              : filtered
+                    .where((s) => s.active == (_filter == 'active'))
+                    .toList();
 
           // Sort alphabetically by name
-          final sorted = List.of(filteredByStatus)..sort((a, b) =>
-              a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+          final sorted = List.of(filteredByStatus)
+            ..sort(
+              (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+            );
 
           if (sorted.isEmpty) {
             return EmptyView(
@@ -99,10 +105,15 @@ class _ServicesScreenState extends ConsumerState<ServicesScreen> {
             children: [
               // Search bar
               Padding(
-                padding: const EdgeInsets.fromLTRB(Gap.gutter, Gap.gutter, Gap.gutter, 8),
-                child: AuroraCard(
+                padding: const EdgeInsets.fromLTRB(
+                  Gap.gutter,
+                  Gap.gutter,
+                  Gap.gutter,
+                  8,
+                ),
+                child: SurfaceCard(
                   padding: const EdgeInsets.all(8),
-                  glow: true,
+
                   child: AppSearchField(
                     hintText: 'Search services by name',
                     onChanged: (v) => setState(() => _query = v),
@@ -112,22 +123,39 @@ class _ServicesScreenState extends ConsumerState<ServicesScreen> {
 
               // Filter bar with Activated, Deactivated, ALL
               Padding(
-                padding: const EdgeInsets.fromLTRB(Gap.gutter, 0, Gap.gutter, 4),
-                child: AuroraCard(
+                padding: const EdgeInsets.fromLTRB(
+                  Gap.gutter,
+                  0,
+                  Gap.gutter,
+                  4,
+                ),
+                child: SurfaceCard(
                   padding: const EdgeInsets.all(8),
-                  glow: true,
+
                   child: FilterBar(
                     selectedId: _filter,
                     semanticLabel: 'Filter services by status',
                     onSelected: (id) => setState(() => _filter = id),
                     onReset: () => setState(() => _filter = 'all'),
                     summary: Text(
-                      '${sorted.length} ${sorted.length == 1 ? 'service' : 'services'}' ,
+                      '${sorted.length} ${sorted.length == 1 ? 'service' : 'services'}',
                     ),
                     options: [
-                      FilterOption(id: 'all', label: 'All', count: items.length),
-                      FilterOption(id: 'active', label: 'Activated', count: items.where((s) => s.active).length),
-                      FilterOption(id: 'inactive', label: 'Deactivated', count: items.where((s) => !s.active).length),
+                      FilterOption(
+                        id: 'all',
+                        label: 'All',
+                        count: items.length,
+                      ),
+                      FilterOption(
+                        id: 'active',
+                        label: 'Activated',
+                        count: items.where((s) => s.active).length,
+                      ),
+                      FilterOption(
+                        id: 'inactive',
+                        label: 'Deactivated',
+                        count: items.where((s) => !s.active).length,
+                      ),
                     ],
                   ),
                 ),
@@ -184,12 +212,18 @@ class _ServiceRow extends ConsumerWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: AppType.label.copyWith(
-                color: service.active ? AppColors.success : AppColors.textTertiary,
+                color: service.active
+                    ? AppColors.success
+                    : AppColors.textTertiary,
               ),
             ),
           ),
           const SizedBox(width: 4),
-          Icon(Icons.arrow_forward_ios, size: 12, color: AppColors.textSecondary),
+          Icon(
+            Icons.arrow_forward_ios,
+            size: 12,
+            color: AppColors.textSecondary,
+          ),
         ],
       ),
     );
@@ -220,9 +254,7 @@ Future<Service?> _openAddServiceScreen(
 ) async {
   // Navigate to a new screen for adding/editing a service
   final result = await Navigator.of(context).push<Service>(
-    MaterialPageRoute(
-      builder: (context) => const _ServiceForm(),
-    ),
+    MaterialPageRoute(builder: (context) => const _ServiceForm()),
   );
   return result;
 }
@@ -279,16 +311,22 @@ class _ServiceFormState extends ConsumerState<_ServiceForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: _isEditing ? const Text('Edit Service') : const Text('Add Service'),
+        title: _isEditing
+            ? const Text('Edit Service')
+            : const Text('Add Service'),
         centerTitle: true,
         actions: [
           TextButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 final newService = Service(
-                  id: _existingServiceId ?? DateTime.now().millisecondsSinceEpoch.toString(),
+                  id:
+                      _existingServiceId ??
+                      DateTime.now().millisecondsSinceEpoch.toString(),
                   name: _nameController.text.trim(),
-                  price: Decimal.tryParse(_priceController.text.trim()) ?? Decimal.zero,
+                  price:
+                      Decimal.tryParse(_priceController.text.trim()) ??
+                      Decimal.zero,
                   billingPeriod: _selectedBillingPeriod ?? 'monthly',
                   description: _descriptionController.text.trim(),
                   active: true,
@@ -319,7 +357,7 @@ class _ServiceFormState extends ConsumerState<_ServiceForm> {
                   style: AppType.label.copyWith(fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 4),
-                AuroraCard(
+                SurfaceCard(
                   padding: const EdgeInsets.all(8),
                   child: TextFormField(
                     controller: _nameController,
@@ -343,7 +381,7 @@ class _ServiceFormState extends ConsumerState<_ServiceForm> {
                   style: AppType.label.copyWith(fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 4),
-                AuroraCard(
+                SurfaceCard(
                   padding: const EdgeInsets.all(8),
                   child: TextFormField(
                     controller: _priceController,
@@ -351,7 +389,9 @@ class _ServiceFormState extends ConsumerState<_ServiceForm> {
                       hintText: '0.00',
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Price is required';
@@ -372,15 +412,19 @@ class _ServiceFormState extends ConsumerState<_ServiceForm> {
                   style: AppType.label.copyWith(fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 4),
-                AuroraCard(
+                SurfaceCard(
                   padding: const EdgeInsets.all(8),
                   child: DropdownButtonFormField<String>(
                     initialValue: _selectedBillingPeriod,
                     hint: const Text('Select billing period'),
-                    items: _billingPeriods.map((period) => DropdownMenuItem<String>(
-                      value: period,
-                      child: Text(period.replaceAll('_', ' ')),
-                    )).toList(),
+                    items: _billingPeriods
+                        .map(
+                          (period) => DropdownMenuItem<String>(
+                            value: period,
+                            child: Text(period.replaceAll('_', ' ')),
+                          ),
+                        )
+                        .toList(),
                     onChanged: (String? newValue) {
                       setState(() => _selectedBillingPeriod = newValue);
                     },
@@ -400,7 +444,7 @@ class _ServiceFormState extends ConsumerState<_ServiceForm> {
                   style: AppType.label.copyWith(fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 4),
-                AuroraCard(
+                SurfaceCard(
                   padding: const EdgeInsets.all(8),
                   child: TextFormField(
                     controller: _descriptionController,
@@ -414,8 +458,8 @@ class _ServiceFormState extends ConsumerState<_ServiceForm> {
                 const SizedBox(height: 24),
               ],
             ),
-            ),
           ),
+        ),
       ),
     );
   }

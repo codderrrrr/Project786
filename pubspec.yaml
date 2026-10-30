@@ -30,13 +30,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-  # Space Grotesk carries the product's voice: headings, section labels and
-  # every money figure. Body text stays on the platform face (Roboto on
-  # Android), which is the most readable option at small sizes.
-  # Licensed under the SIL Open Font License 1.1 — see
-  # assets/fonts/SpaceGrotesk-OFL.txt.
-  fonts:
-    - family: SpaceGrotesk
-      fonts:
-        - asset: assets/fonts/SpaceGrotesk-Variable.ttf

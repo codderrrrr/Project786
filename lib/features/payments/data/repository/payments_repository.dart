@@ -4,7 +4,11 @@ import 'package:subscription_saas_flutter/features/payments/domain/models/paymen
 import 'package:subscription_saas_flutter/features/payments/domain/models/payment_item.dart';
 
 abstract class PaymentsRepository {
-  Future<CursorPage<Payment>> listPayments({String? cursor, int limit = 20, String? subscriberId});
+  Future<CursorPage<Payment>> listPayments({
+    String? cursor,
+    int limit = 20,
+    String? subscriberId,
+  });
   Future<Payment?> getPayment(String id);
   Future<Payment> createPayment({
     required String subscriberId,

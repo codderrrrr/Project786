@@ -24,7 +24,8 @@ class SubscriptionsScreen extends ConsumerStatefulWidget {
   const SubscriptionsScreen({super.key});
 
   @override
-  ConsumerState<SubscriptionsScreen> createState() => _SubscriptionsScreenState();
+  ConsumerState<SubscriptionsScreen> createState() =>
+      _SubscriptionsScreenState();
 }
 
 class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
@@ -37,20 +38,20 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
     final subscribers = ref.watch(subscribersListProvider(null));
 
     String serviceName(String id) => services.maybeWhen(
-          data: (p) {
-            final m = p.items.where((x) => x.id == id);
-            return m.isEmpty ? id : m.first.name;
-          },
-          orElse: () => id,
-        );
+      data: (p) {
+        final m = p.items.where((x) => x.id == id);
+        return m.isEmpty ? id : m.first.name;
+      },
+      orElse: () => id,
+    );
 
     String subscriberName(String id) => subscribers.maybeWhen(
-          data: (p) {
-            final m = p.items.where((x) => x.id == id);
-            return m.isEmpty ? id : m.first.name;
-          },
-          orElse: () => id,
-        );
+      data: (p) {
+        final m = p.items.where((x) => x.id == id);
+        return m.isEmpty ? id : m.first.name;
+      },
+      orElse: () => id,
+    );
 
     return AppScaffold(
       title: 'Subscriptions',
@@ -68,7 +69,9 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
       bodyPadding: EdgeInsets.zero,
       pinnedHeader: subs.maybeWhen(
         data: (page) {
-          final active = page.items.where((s) => !s.cancelled && s.status == 'active').length;
+          final active = page.items
+              .where((s) => !s.cancelled && s.status == 'active')
+              .length;
           final cancelled = page.items.where((s) => s.cancelled).length;
           return Padding(
             padding: const EdgeInsets.fromLTRB(Gap.gutter, 0, Gap.gutter, 12),
@@ -79,7 +82,11 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
               options: [
                 FilterOption(id: 'all', label: 'All', count: page.items.length),
                 FilterOption(id: 'active', label: 'Active', count: active),
-                FilterOption(id: 'cancelled', label: 'Cancelled', count: cancelled),
+                FilterOption(
+                  id: 'cancelled',
+                  label: 'Cancelled',
+                  count: cancelled,
+                ),
               ],
             ),
           );
@@ -128,7 +135,11 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
                             title: name,
                             subtitle:
                                 '${serviceName(s.serviceId)} · next ${BizDate.prettyYMD(s.nextPaymentDate)}',
-                            leading: InitialsAvatar(name: name, size: 34, dimmed: s.cancelled),
+                            leading: InitialsAvatar(
+                              name: name,
+                              size: 34,
+                              dimmed: s.cancelled,
+                            ),
                             showChevron: false,
                             onTap: () => context.push('/subscriptions/${s.id}'),
                             semanticLabel:
@@ -136,12 +147,16 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
                             semanticHint: 'Opens subscription details',
                             trailing: RowValue(
                               value: MoneyText(s.price, style: AppType.money),
-                              note: s.cancelled ? 'Cancelled' : (s.status == 'active' ? 'Active' : s.status),
+                              note: s.cancelled
+                                  ? 'Cancelled'
+                                  : (s.status == 'active'
+                                        ? 'Active'
+                                        : s.status),
                               noteTone: s.cancelled
                                   ? AppColors.textTertiary
                                   : s.status == 'active'
-                                      ? AppColors.success
-                                      : AppColors.textSecondary,
+                                  ? AppColors.success
+                                  : AppColors.textSecondary,
                             ),
                           );
                         },

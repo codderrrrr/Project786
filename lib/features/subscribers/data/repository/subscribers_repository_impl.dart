@@ -13,8 +13,7 @@ class SubscribersRepositoryImpl implements SubscribersRepository {
     String? cursor,
     int limit = 20,
     String? query,
-  }) =>
-      datasource.listSubscribers(cursor: cursor, limit: limit, query: query);
+  }) => datasource.listSubscribers(cursor: cursor, limit: limit, query: query);
 
   @override
   Future<Subscriber?> getSubscriber(String id) => datasource.getSubscriber(id);
@@ -24,8 +23,7 @@ class SubscribersRepositoryImpl implements SubscribersRepository {
     required String name,
     required String phone,
     String cnic = '',
-  }) =>
-      datasource.createSubscriber(name: name, phone: phone, cnic: cnic);
+  }) => datasource.createSubscriber(name: name, phone: phone, cnic: cnic);
 
   @override
   Future<Subscriber> setSubscriberActive(String id, bool active) =>

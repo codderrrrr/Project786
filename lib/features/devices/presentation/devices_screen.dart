@@ -52,7 +52,9 @@ class _DevicesScreenState extends State<DevicesScreen> {
                   title: d.name,
                   subtitle: '${d.detail} · ${d.lastActive}',
                   leading: Icon(
-                    d.current ? Icons.phone_android_rounded : Icons.tablet_android_rounded,
+                    d.current
+                        ? Icons.phone_android_rounded
+                        : Icons.tablet_android_rounded,
                     size: 20,
                     color: d.current ? AppColors.success : AppColors.primary,
                   ),
@@ -103,7 +105,8 @@ class _DevicesScreenState extends State<DevicesScreen> {
     final ok = await showConfirmDialog(
       context,
       title: 'Revoke ${d.name}?',
-      message: 'That device will be signed out and will need the password again.',
+      message:
+          'That device will be signed out and will need the password again.',
       consequence: 'You stay signed in here. Business data and payment history are unaffected.',
       confirmLabel: 'Revoke',
       destructive: true,

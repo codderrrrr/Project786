@@ -3,7 +3,7 @@ import 'package:subscription_saas_flutter/features/payments/domain/models/paymen
 
 class DummyPaymentsStore {
   static final List<Payment> _payments = List.from(DummyPaymentsData.all());
-  
+
   static List<Payment> all() => List.unmodifiable(_payments);
   static void add(Payment p) => _payments.insert(0, p);
 }

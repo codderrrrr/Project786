@@ -69,7 +69,9 @@ class PaymentReviewScreen extends ConsumerWidget {
       data: (page) {
         if (page.items.isEmpty) return null;
         final overdue = page.items.where((o) => o.status == 'overdue');
-        return overdue.isEmpty ? page.items.first.subscriberId : overdue.first.subscriberId;
+        return overdue.isEmpty
+            ? page.items.first.subscriberId
+            : overdue.first.subscriberId;
       },
       orElse: () => null,
     );
@@ -88,7 +90,8 @@ class _ReviewBody extends ConsumerStatefulWidget {
 class _ReviewBodyState extends ConsumerState<_ReviewBody> {
   /// One key per logical payment. Retrying the same confirmation reuses it, so
   /// a double tap can never record two payments.
-  late final String _idempotencyKey = 'idem_${DateTime.now().microsecondsSinceEpoch}';
+  late final String _idempotencyKey =
+      'idem_${DateTime.now().microsecondsSinceEpoch}';
 
   final Set<String> _selection = {};
   bool _selectionInitialised = false;
@@ -108,7 +111,9 @@ class _ReviewBodyState extends ConsumerState<_ReviewBody> {
 
   @override
   Widget build(BuildContext context) {
-    final subscriptions = ref.watch(subscriptionsListProvider(widget.subscriberId));
+    final subscriptions = ref.watch(
+      subscriptionsListProvider(widget.subscriberId),
+    );
     final services = ref.watch(servicesListProvider);
 
     return subscriptions.when(
@@ -118,20 +123,25 @@ class _ReviewBodyState extends ConsumerState<_ReviewBody> {
             .toList();
 
         String serviceName(String id) => services.maybeWhen(
-              data: (sp) {
-                final m = sp.items.where((x) => x.id == id);
-                return m.isEmpty ? id : m.first.name;
-              },
-              orElse: () => id,
-            );
+          data: (sp) {
+            final m = sp.items.where((x) => x.id == id);
+            return m.isEmpty ? id : m.first.name;
+          },
+          orElse: () => id,
+        );
 
         if (!_selectionInitialised && active.isNotEmpty) {
-          final due = active.where((s) => BizDate.daysBetween(BizDate.todayYMD(), s.nextPaymentDate) <= 7);
+          final due = active.where(
+            (s) =>
+                BizDate.daysBetween(BizDate.todayYMD(), s.nextPaymentDate) <= 7,
+          );
           _selection.addAll((due.isEmpty ? active : due).map((s) => s.id));
           _selectionInitialised = true;
         }
 
-        final selected = active.where((s) => _selection.contains(s.id)).toList();
+        final selected = active
+            .where((s) => _selection.contains(s.id))
+            .toList();
         final calculated = MoneyUtils.sum(selected.map((s) => s.price));
 
         Decimal billed;
@@ -146,12 +156,14 @@ class _ReviewBodyState extends ConsumerState<_ReviewBody> {
         }
 
         final items = selected
-            .map((s) => PaymentItem(
-                  subscriptionId: s.id,
-                  serviceName: serviceName(s.serviceId),
-                  amount: s.price,
-                  dueDate: s.nextPaymentDate,
-                ))
+            .map(
+              (s) => PaymentItem(
+                subscriptionId: s.id,
+                serviceName: serviceName(s.serviceId),
+                amount: s.price,
+                dueDate: s.nextPaymentDate,
+              ),
+            )
             .toList();
 
         if (_committed != null) {
@@ -176,7 +188,9 @@ class _ReviewBodyState extends ConsumerState<_ReviewBody> {
                     count: selected.length,
                   ),
                   if (active.isEmpty)
-                    const InlineError(message: 'This subscriber has no active subscriptions to collect.')
+                    const InlineError(
+                      message: 'This subscriber has no active subscriptions to collect.',
+                    )
                   else
                     SurfaceSection(
                       children: [
@@ -184,7 +198,10 @@ class _ReviewBodyState extends ConsumerState<_ReviewBody> {
                           Builder(
                             builder: (context) {
                               final sub = active[i];
-                              final overdue = BizDate.isBefore(sub.nextPaymentDate, BizDate.todayYMD());
+                              final overdue = BizDate.isBefore(
+                                sub.nextPaymentDate,
+                                BizDate.todayYMD(),
+                              );
                               final selected = _selection.contains(sub.id);
                               return SurfaceRow(
                                 title: serviceName(sub.serviceId),
@@ -200,7 +217,10 @@ class _ReviewBodyState extends ConsumerState<_ReviewBody> {
                                     _selection.add(sub.id);
                                   }
                                 }),
-                                trailing: MoneyText(sub.price, style: AppType.money),
+                                trailing: MoneyText(
+                                  sub.price,
+                                  style: AppType.money,
+                                ),
                               );
                             },
                           ),
@@ -216,10 +236,17 @@ class _ReviewBodyState extends ConsumerState<_ReviewBody> {
                       ),
                       if (_adjusting)
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(Gap.gutter, 6, Gap.gutter, 6),
+                          padding: const EdgeInsets.fromLTRB(
+                            Gap.gutter,
+                            6,
+                            Gap.gutter,
+                            6,
+                          ),
                           child: TextField(
                             controller: _billed,
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
                             decoration: InputDecoration(
                               labelText: 'Billed amount (PKR)',
                               helperText: 'Override the calculated amount if you agreed a different figure',
@@ -235,7 +262,9 @@ class _ReviewBodyState extends ConsumerState<_ReviewBody> {
                                 }
                                 try {
                                   final parsed = MoneyUtils.parseDecimal(raw);
-                                  _billedError = parsed < Decimal.zero ? 'Amount cannot be negative' : null;
+                                  _billedError = parsed < Decimal.zero
+                                      ? 'Amount cannot be negative'
+                                      : null;
                                 } catch (_) {
                                   _billedError = 'Enter a number, for example 3500 or 3500.50';
                                 }
@@ -250,8 +279,12 @@ class _ReviewBodyState extends ConsumerState<_ReviewBody> {
                           showChevron: false,
                         ),
                       SurfaceRow(
-                        title: _adjusting ? 'Use calculated amount' : 'Adjust billed amount',
-                        subtitle: _adjusting ? 'Revert to the calculated total' : 'Set a different billed figure',
+                        title: _adjusting
+                            ? 'Use calculated amount'
+                            : 'Adjust billed amount',
+                        subtitle: _adjusting
+                            ? 'Revert to the calculated total'
+                            : 'Set a different billed figure',
                         showChevron: false,
                         onTap: () => setState(() {
                           _adjusting = !_adjusting;
@@ -268,7 +301,11 @@ class _ReviewBodyState extends ConsumerState<_ReviewBody> {
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      Icon(Icons.lock_outline_rounded, size: 13, color: AppColors.textTertiary),
+                      Icon(
+                        Icons.lock_outline_rounded,
+                        size: 13,
+                        color: AppColors.textTertiary,
+                      ),
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
@@ -285,7 +322,8 @@ class _ReviewBodyState extends ConsumerState<_ReviewBody> {
             ),
             _PinnedBar(
               total: billed,
-              enabled: selected.isNotEmpty && _billedError == null && !_submitting,
+              enabled:
+                  selected.isNotEmpty && _billedError == null && !_submitting,
               busy: _submitting,
               onConfirm: () => _confirm(items, calculated, billed),
             ),
@@ -315,7 +353,9 @@ class _ReviewBodyState extends ConsumerState<_ReviewBody> {
       _retrying = _committed == null;
     });
     try {
-      final payment = await ref.read(paymentsRepositoryProvider).createPayment(
+      final payment = await ref
+          .read(paymentsRepositoryProvider)
+          .createPayment(
             subscriberId: widget.subscriberId,
             items: items,
             calculatedAmount: calculated,
@@ -327,8 +367,11 @@ class _ReviewBodyState extends ConsumerState<_ReviewBody> {
       // genuinely clears. One-off services are completed instead.
       final repo = ref.read(subscriptionsRepositoryProvider);
       for (final item in items) {
-        final sub = ref.read(subscriptionsListProvider(widget.subscriberId)).maybeWhen(
-              data: (p) => p.items.where((s) => s.id == item.subscriptionId).firstOrNull,
+        final sub = ref
+            .read(subscriptionsListProvider(widget.subscriberId))
+            .maybeWhen(
+              data: (p) =>
+                  p.items.where((s) => s.id == item.subscriptionId).firstOrNull,
               orElse: () => null,
             );
         if (sub == null) continue;
@@ -377,7 +420,8 @@ class _TotalHero extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       container: true,
-      label: 'You will collect ${MoneyUtils.formatPKR(amount)} for $count subscriptions',
+      label:
+          'You will collect ${MoneyUtils.formatPKR(amount)} for $count subscriptions',
       excludeSemantics: true,
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -409,8 +453,6 @@ class _TotalHero extends StatelessWidget {
   }
 }
 
-
-
 class _PinnedBar extends StatelessWidget {
   const _PinnedBar({
     required this.total,
@@ -432,10 +474,16 @@ class _PinnedBar extends StatelessWidget {
         // The figure being approved is never allowed to show as "PKR 3,5…":
         // it scales down instead of being ellipsised.
         FitWidth(
-          child: MoneyText(total, style: AppType.moneyLarge.copyWith(fontSize: 21)),
+          child: MoneyText(
+            total,
+            style: AppType.moneyLarge.copyWith(fontSize: 21),
+          ),
         ),
         const SizedBox(height: 2),
-        Text('Fixed once confirmed', style: AppType.overline.copyWith(letterSpacing: 0.2)),
+        Text(
+          'Fixed once confirmed',
+          style: AppType.overline.copyWith(letterSpacing: 0.2),
+        ),
       ],
     );
 
@@ -509,7 +557,9 @@ class _SuccessView extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColors.surface,
               borderRadius: AppRadii.rMd,
-              border: Border.all(color: AppColors.success.withValues(alpha: 0.4)),
+              border: Border.all(
+                color: AppColors.success.withValues(alpha: 0.4),
+              ),
             ),
             child: Column(
               children: [
@@ -517,7 +567,8 @@ class _SuccessView extends StatelessWidget {
                   tween: Tween(begin: 0, end: 1),
                   duration: reduced ? Duration.zero : AppMotion.slow,
                   curve: AppMotion.overshoot,
-                  builder: (context, t, child) => Transform.scale(scale: t, child: child),
+                  builder: (context, t, child) =>
+                      Transform.scale(scale: t, child: child),
                   child: Container(
                     width: 64,
                     height: 64,
@@ -525,7 +576,11 @@ class _SuccessView extends StatelessWidget {
                       color: AppColors.success.withValues(alpha: 0.14),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(Icons.check_rounded, color: AppColors.success, size: 32),
+                    child: Icon(
+                      Icons.check_rounded,
+                      color: AppColors.success,
+                      size: 32,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -555,11 +610,31 @@ class _SuccessView extends StatelessWidget {
         const SizedBox(height: 16),
         SurfaceSection(
           children: [
-            SurfaceRow(title: 'Receipt number', subtitle: payment.receiptId ?? '—', showChevron: false),
-            SurfaceRow(title: 'Payment ID', subtitle: payment.id, showChevron: false),
-            SurfaceRow(title: 'Calculated', subtitle: MoneyUtils.formatPKR(payment.calculatedAmount), showChevron: false),
-            SurfaceRow(title: 'Billed', subtitle: MoneyUtils.formatPKR(payment.billedAmount), showChevron: false),
-            SurfaceRow(title: 'Date', subtitle: BizDate.prettyYMD(payment.paymentDate), showChevron: false),
+            SurfaceRow(
+              title: 'Receipt number',
+              subtitle: payment.receiptId ?? '—',
+              showChevron: false,
+            ),
+            SurfaceRow(
+              title: 'Payment ID',
+              subtitle: payment.id,
+              showChevron: false,
+            ),
+            SurfaceRow(
+              title: 'Calculated',
+              subtitle: MoneyUtils.formatPKR(payment.calculatedAmount),
+              showChevron: false,
+            ),
+            SurfaceRow(
+              title: 'Billed',
+              subtitle: MoneyUtils.formatPKR(payment.billedAmount),
+              showChevron: false,
+            ),
+            SurfaceRow(
+              title: 'Date',
+              subtitle: BizDate.prettyYMD(payment.paymentDate),
+              showChevron: false,
+            ),
           ],
         ),
         const SizedBox(height: 22),

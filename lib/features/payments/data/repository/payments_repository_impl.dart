@@ -10,8 +10,16 @@ class PaymentsRepositoryImpl implements PaymentsRepository {
   PaymentsRepositoryImpl(this.datasource);
 
   @override
-  Future<CursorPage<Payment>> listPayments({String? cursor, int limit = 20, String? subscriberId}) {
-    return datasource.listPayments(cursor: cursor, limit: limit, subscriberId: subscriberId);
+  Future<CursorPage<Payment>> listPayments({
+    String? cursor,
+    int limit = 20,
+    String? subscriberId,
+  }) {
+    return datasource.listPayments(
+      cursor: cursor,
+      limit: limit,
+      subscriberId: subscriberId,
+    );
   }
 
   @override

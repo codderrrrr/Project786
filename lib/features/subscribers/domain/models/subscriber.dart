@@ -2,6 +2,7 @@ class Subscriber {
   final String id;
   final String name;
   final String phone;
+
   /// Stored for backend verification only; never rendered in the UI.
   final String cnic;
   final bool active;

@@ -123,11 +123,7 @@ class _Body extends StatelessWidget {
               subtitle: p.receiptId ?? '—',
               showChevron: false,
             ),
-            SurfaceRow(
-              title: 'Payment ID',
-              subtitle: p.id,
-              showChevron: false,
-            ),
+            SurfaceRow(title: 'Payment ID', subtitle: p.id, showChevron: false),
           ],
         ),
         const SizedBox(height: 16),

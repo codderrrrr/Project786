@@ -22,13 +22,12 @@ class ServicesRepositoryImpl implements ServicesRepository {
     required String description,
     required Decimal price,
     required String billingPeriod,
-  }) =>
-      datasource.createService(
-        name: name,
-        description: description,
-        price: price,
-        billingPeriod: billingPeriod,
-      );
+  }) => datasource.createService(
+    name: name,
+    description: description,
+    price: price,
+    billingPeriod: billingPeriod,
+  );
 
   @override
   Future<Service> setServiceActive(String id, bool active) =>

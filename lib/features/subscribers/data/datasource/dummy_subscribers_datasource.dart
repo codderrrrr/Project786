@@ -15,15 +15,21 @@ class DummySubscribersDatasource {
     if (query != null && query.isNotEmpty) {
       final q = query.toLowerCase();
       filtered = all
-          .where((e) =>
-              e.name.toLowerCase().contains(q) ||
-              e.phone.contains(q) ||
-              e.cnic.toLowerCase().contains(q))
+          .where(
+            (e) =>
+                e.name.toLowerCase().contains(q) ||
+                e.phone.contains(q) ||
+                e.cnic.toLowerCase().contains(q),
+          )
           .toList();
     }
     final offset = CursorUtils.decode(cursor);
-    final end = (offset + limit) > filtered.length ? filtered.length : (offset + limit);
-    final items = offset >= filtered.length ? <Subscriber>[] : filtered.sublist(offset, end);
+    final end = (offset + limit) > filtered.length
+        ? filtered.length
+        : (offset + limit);
+    final items = offset >= filtered.length
+        ? <Subscriber>[]
+        : filtered.sublist(offset, end);
     final next = end < filtered.length ? CursorUtils.encode(end) : null;
     return CursorPage(items: items, nextCursor: next, hasMore: next != null);
   }

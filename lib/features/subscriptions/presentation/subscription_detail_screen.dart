@@ -95,7 +95,14 @@ class _Body extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  Expanded(child: Text(serviceName, style: AppType.title, maxLines: 1, overflow: TextOverflow.ellipsis)),
+                  Expanded(
+                    child: Text(
+                      serviceName,
+                      style: AppType.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                   StatusPill.fromStatus(s.cancelled ? 'cancelled' : s.status),
                 ],
               ),
@@ -120,7 +127,9 @@ class _Body extends ConsumerWidget {
               subtitle: BizDate.prettyYMD(s.nextPaymentDate),
               showChevron: false,
               trailing: TextButton(
-                onPressed: s.cancelled ? null : () => _changeNextDate(context, ref),
+                onPressed: s.cancelled
+                    ? null
+                    : () => _changeNextDate(context, ref),
                 child: const Text('Change'),
               ),
             ),
@@ -177,16 +186,22 @@ class _Body extends ConsumerWidget {
                     'Cancelled on ${s.endDate == null ? 'an earlier date' : BizDate.prettyYMD(s.endDate!)}. Past payments and receipts remain available.',
                 showChevron: false,
                 onTap: () => _cancel(context, ref),
-                trailing: const Icon(Icons.play_circle_outline_rounded, size: 18),
+                trailing: const Icon(
+                  Icons.play_circle_outline_rounded,
+                  size: 18,
+                ),
               )
             else
               SurfaceRow(
                 title: 'Cancel subscription',
-                subtitle:
-                    'Cancelling stops future obligations. Payments already collected and their receipts remain.',
+                subtitle: 'Cancelling stops future obligations. Payments already collected and their receipts remain.',
                 showChevron: false,
                 onTap: () => _cancel(context, ref),
-                trailing: Icon(Icons.block_rounded, size: 18, color: AppColors.danger),
+                trailing: Icon(
+                  Icons.block_rounded,
+                  size: 18,
+                  color: AppColors.danger,
+                ),
               ),
           ],
         ),
@@ -211,7 +226,9 @@ class _Body extends ConsumerWidget {
     if (picked == null || !context.mounted) return;
     final ymd =
         '${picked.year.toString().padLeft(4, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
-    await ref.read(subscriptionsRepositoryProvider).changeNextPaymentDate(subscription.id, ymd);
+    await ref
+        .read(subscriptionsRepositoryProvider)
+        .changeNextPaymentDate(subscription.id, ymd);
     ref.invalidate(subscriptionDetailProvider(subscription.id));
     ref.invalidate(subscriptionsListProvider);
     ref.invalidate(billingObligationsProvider);
@@ -223,7 +240,10 @@ class _Body extends ConsumerWidget {
         onAction: () async {
           await ref
               .read(subscriptionsRepositoryProvider)
-              .changeNextPaymentDate(subscription.id, subscription.nextPaymentDate);
+              .changeNextPaymentDate(
+                subscription.id,
+                subscription.nextPaymentDate,
+              );
           ref.invalidate(subscriptionDetailProvider(subscription.id));
           ref.invalidate(subscriptionsListProvider);
         },
@@ -242,10 +262,9 @@ class _Body extends ConsumerWidget {
       destructive: true,
     );
     if (!ok || !context.mounted) return;
-    await ref.read(subscriptionsRepositoryProvider).cancelSubscription(
-          subscription.id,
-          endedOn: BizDate.todayYMD(),
-        );
+    await ref
+        .read(subscriptionsRepositoryProvider)
+        .cancelSubscription(subscription.id, endedOn: BizDate.todayYMD());
     ref.invalidate(subscriptionDetailProvider(subscription.id));
     ref.invalidate(subscriptionsListProvider);
     ref.invalidate(billingObligationsProvider);

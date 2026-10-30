@@ -11,11 +11,9 @@ import 'package:subscription_saas_flutter/core/widgets/app_scaffold.dart';
 import 'package:subscription_saas_flutter/core/widgets/mini_charts.dart';
 import 'package:subscription_saas_flutter/core/widgets/rate_track.dart';
 import 'package:subscription_saas_flutter/core/widgets/section_header.dart';
-import 'package:subscription_saas_flutter/core/widgets/creative/section_header_artistic.dart';
 import 'package:subscription_saas_flutter/core/widgets/state_widgets.dart';
 import 'package:subscription_saas_flutter/core/widgets/surface_rows.dart';
-import 'package:subscription_saas_flutter/core/widgets/creative/aurora_card.dart';
-import 'package:subscription_saas_flutter/core/widgets/creative/minimal_card.dart';
+import 'package:subscription_saas_flutter/core/components/surface_card.dart';
 import 'package:subscription_saas_flutter/features/billing/data/providers/billing_providers.dart';
 import 'package:subscription_saas_flutter/features/payments/data/providers/payments_providers.dart';
 import 'package:subscription_saas_flutter/features/subscribers/data/providers/subscribers_providers.dart';
@@ -41,11 +39,15 @@ class AnalyticsScreen extends ConsumerWidget {
       subtitle: 'From recorded payments',
       body: payments.when(
         data: (paymentsPage) {
-          final collected = MoneyUtils.sum(paymentsPage.items.map((p) => p.finalAmount));
+          final collected = MoneyUtils.sum(
+            paymentsPage.items.map((p) => p.finalAmount),
+          );
           final paymentCount = paymentsPage.items.length;
 
           final activeSubs = subscriptions.maybeWhen(
-            data: (p) => p.items.where((s) => !s.cancelled && s.status == 'active').length,
+            data: (p) => p.items
+                .where((s) => !s.cancelled && s.status == 'active')
+                .length,
             orElse: () => 0,
           );
           final totalSubs = subscriptions.maybeWhen(
@@ -68,7 +70,9 @@ class AnalyticsScreen extends ConsumerWidget {
           final expected = outstanding + collected;
           final collectionRate = expected == Decimal.zero
               ? 0.0
-              : (collected / expected).toDecimal(scaleOnInfinitePrecision: 4).toDouble();
+              : (collected / expected)
+                    .toDecimal(scaleOnInfinitePrecision: 4)
+                    .toDouble();
           // Six-month trend built from recorded payments; zero-filled months
           // are shown honestly as zero rather than interpolated.
           final now = DateTime.now();
@@ -76,23 +80,39 @@ class AnalyticsScreen extends ConsumerWidget {
           for (var i = 5; i >= 0; i--) {
             final month = DateTime(now.year, now.month - i, 1);
             final label = [
-              'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-              'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+              'Jan',
+              'Feb',
+              'Mar',
+              'Apr',
+              'May',
+              'Jun',
+              'Jul',
+              'Aug',
+              'Sep',
+              'Oct',
+              'Nov',
+              'Dec',
             ][month.month - 1];
             final total = MoneyUtils.sum(
-              paymentsPage.items.where((p) {
-                final d = DateTime.tryParse(p.paymentDate);
-                return d != null && d.year == month.year && d.month == month.month;
-              }).map((p) => p.finalAmount),
+              paymentsPage.items
+                  .where((p) {
+                    final d = DateTime.tryParse(p.paymentDate);
+                    return d != null &&
+                        d.year == month.year &&
+                        d.month == month.month;
+                  })
+                  .map((p) => p.finalAmount),
             );
-            buckets.add(BarDatum(label, double.parse(total.toStringAsFixed(2))));
+            buckets.add(
+              BarDatum(label, double.parse(total.toStringAsFixed(2))),
+            );
           }
 
           return ListView(
             padding: const EdgeInsets.only(bottom: 24),
             children: [
               // Summary: no ring, no gradient — value, rate and the remainder.
-              MinimalCard(
+              SurfaceCard(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,7 +145,7 @@ class AnalyticsScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              const SectionHeaderArtistic(title: 'Capacity'),
+              const SectionHeader(title: 'Capacity'),
               SurfaceSection(
                 children: [
                   SurfaceRow(
@@ -143,7 +163,7 @@ class AnalyticsScreen extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 24),
-              const SectionHeaderArtistic(
+              const SectionHeader(
                 title: 'Collected by month',
                 subtitle: 'Six months, from recorded payments',
               ),
@@ -162,7 +182,8 @@ class AnalyticsScreen extends ConsumerWidget {
                       height: 132,
                       valueFormatter: (v) => v == 0
                           ? '—'
-                          : MoneyUtils.formatPKRFromDouble(v).replaceAll('PKR ', ''),
+                          : MoneyUtils.formatPKRFromDouble(v)
+                                .replaceAll('PKR ', ''),
                     ),
                     const SizedBox(height: 12),
                     Wrap(
@@ -170,21 +191,25 @@ class AnalyticsScreen extends ConsumerWidget {
                       runSpacing: 8,
                       children: [
                         LegendDot(color: AppColors.primary, label: 'Collected'),
-                        LegendDot(color: AppColors.outline, label: 'No payments'),
+                        LegendDot(
+                          color: AppColors.outline,
+                          label: 'No payments',
+                        ),
                       ],
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 24),
-              const SectionHeaderArtistic(title: 'Utilisation'),
+              const SectionHeader(title: 'Utilisation'),
               SurfaceSection(
                 children: [
                   RateTrack(
                     active: activeSubs,
                     total: totalSubs,
                     label: 'Subscriptions running',
-                    detail: '$activePeople of $totalPeople subscribers now on a live plan',
+                    detail:
+                        '$activePeople of $totalPeople subscribers now on a live plan',
                   ),
                 ],
               ),
@@ -223,7 +248,9 @@ class _SummaryLine extends StatelessWidget {
           Expanded(child: Text(label, style: AppType.caption)),
           Text(
             value,
-            style: AppType.bodyStrong.copyWith(color: tone ?? AppColors.textPrimary),
+            style: AppType.bodyStrong.copyWith(
+              color: tone ?? AppColors.textPrimary,
+            ),
           ),
         ],
       ),

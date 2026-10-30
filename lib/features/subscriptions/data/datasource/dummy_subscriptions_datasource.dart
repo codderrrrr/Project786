@@ -16,8 +16,12 @@ class DummySubscriptionsDatasource {
       filtered = all.where((e) => e.subscriberId == subscriberId).toList();
     }
     final offset = CursorUtils.decode(cursor);
-    final end = (offset + limit) > filtered.length ? filtered.length : (offset + limit);
-    final items = offset >= filtered.length ? <Subscription>[] : filtered.sublist(offset, end);
+    final end = (offset + limit) > filtered.length
+        ? filtered.length
+        : (offset + limit);
+    final items = offset >= filtered.length
+        ? <Subscription>[]
+        : filtered.sublist(offset, end);
     final next = end < filtered.length ? CursorUtils.encode(end) : null;
     return CursorPage(items: items, nextCursor: next, hasMore: next != null);
   }
@@ -27,12 +31,18 @@ class DummySubscriptionsDatasource {
     return DummySubscriptionsStore.byId(id);
   }
 
-  Future<Subscription> changeNextPaymentDate(String id, String nextPaymentDate) async {
+  Future<Subscription> changeNextPaymentDate(
+    String id,
+    String nextPaymentDate,
+  ) async {
     await Future.delayed(const Duration(milliseconds: 220));
     return DummySubscriptionsStore.changeNextPaymentDate(id, nextPaymentDate);
   }
 
-  Future<Subscription> cancelSubscription(String id, {required String endedOn}) async {
+  Future<Subscription> cancelSubscription(
+    String id, {
+    required String endedOn,
+  }) async {
     await Future.delayed(const Duration(milliseconds: 260));
     return DummySubscriptionsStore.cancel(id, endedOn: endedOn);
   }

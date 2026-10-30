@@ -46,7 +46,9 @@ class _AppearanceScreenState extends ConsumerState<AppearanceScreen> {
       body: ListView(
         // Clear of the system gesture area and the last row: the old trailing
         // padding was smaller than the bottom bar and hid the final option.
-        padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom + 24),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.paddingOf(context).bottom + 24,
+        ),
         children: [
           const SectionHeader(
             title: 'Colour scheme',
@@ -57,19 +59,23 @@ class _AppearanceScreenState extends ConsumerState<AppearanceScreen> {
             child: FilterBar(
               options: [
                 FilterOption(id: 'all', label: 'All', count: all.length),
-                FilterOption(id: 'dark', label: 'Dark', count: all.where((p) => p.isDark).length),
-                FilterOption(id: 'light', label: 'Light', count: all.where((p) => !p.isDark).length),
+                FilterOption(
+                  id: 'dark',
+                  label: 'Dark',
+                  count: all.where((p) => p.isDark).length,
+                ),
+                FilterOption(
+                  id: 'light',
+                  label: 'Light',
+                  count: all.where((p) => !p.isDark).length,
+                ),
               ],
               selectedId: _filter,
               onSelected: (id) => setState(() => _filter = id),
               semanticLabel: 'Filter themes by brightness',
             ),
           ),
-          _ThemeList(
-            palettes: visible,
-            activeId: active.id,
-            onSelect: _select,
-          ),
+          _ThemeList(palettes: visible, activeId: active.id, onSelect: _select),
         ],
       ),
     );
@@ -145,10 +151,14 @@ class _ThemeOption extends StatelessWidget {
       haptic: true,
       semanticLabel:
           '${p.name}, ${p.isDark ? 'dark' : 'light'} theme${selected ? ', selected' : ''}',
-      semanticHint: selected ? 'Currently selected' : 'Double tap to apply this theme',
+      semanticHint: selected
+          ? 'Currently selected'
+          : 'Double tap to apply this theme',
       excludeChildSemantics: true,
       child: Container(
-        color: selected ? AppColors.primary.withValues(alpha: 0.07) : Colors.transparent,
+        color: selected
+            ? AppColors.primary.withValues(alpha: 0.07)
+            : Colors.transparent,
         padding: const EdgeInsets.fromLTRB(Gap.gutter, 12, Gap.gutter, 12),
         child: Row(
           children: [

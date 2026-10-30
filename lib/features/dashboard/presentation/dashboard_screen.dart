@@ -12,10 +12,8 @@ import 'package:subscription_saas_flutter/core/pagination/cursor.dart';
 import 'package:subscription_saas_flutter/core/widgets/app_scaffold.dart';
 import 'package:subscription_saas_flutter/core/widgets/app_shell.dart';
 import 'package:subscription_saas_flutter/core/widgets/section_header.dart';
+import 'package:subscription_saas_flutter/core/components/surface_card.dart';
 import 'package:subscription_saas_flutter/core/widgets/state_widgets.dart';
-import 'package:subscription_saas_flutter/core/widgets/creative/aurora_card.dart';
-import 'package:subscription_saas_flutter/core/widgets/creative/minimal_card.dart';
-import 'package:subscription_saas_flutter/core/widgets/creative/section_header_artistic.dart';
 import 'package:subscription_saas_flutter/features/billing/data/providers/billing_providers.dart';
 import 'package:subscription_saas_flutter/features/billing/domain/models/obligation.dart';
 import 'package:subscription_saas_flutter/features/dashboard/presentation/hide_amounts_provider.dart';
@@ -54,14 +52,24 @@ class DashboardScreen extends ConsumerWidget {
         ),
         data: (page) {
           final items = page.items;
-          final overdue = items.where((item) => item.status == 'overdue').toList();
+          final overdue = items
+              .where((item) => item.status == 'overdue')
+              .toList();
           final expected = MoneyUtils.sum(items.map((item) => item.amountDue));
-          final overdueTotal = MoneyUtils.sum(overdue.map((item) => item.amountDue));
+          final overdueTotal = MoneyUtils.sum(
+            overdue.map((item) => item.amountDue),
+          );
           final paidThisMonth = _paymentsThisMonth(payments);
-          final collected = MoneyUtils.sum(paidThisMonth.map((item) => item.finalAmount));
-          final paidSubscriberCount = paidThisMonth.map((item) => item.subscriberId).toSet().length;
+          final collected = MoneyUtils.sum(
+            paidThisMonth.map((item) => item.finalAmount),
+          );
+          final paidSubscriberCount = paidThisMonth
+              .map((item) => item.subscriberId)
+              .toSet()
+              .length;
           final activeSubscribers = subscribers.maybeWhen(
-            data: (value) => value.items.where((subscriber) => subscriber.active).length,
+            data: (value) =>
+                value.items.where((subscriber) => subscriber.active).length,
             orElse: () => 0,
           );
           final totalSubscribers = subscribers.maybeWhen(
@@ -75,7 +83,9 @@ class DashboardScreen extends ConsumerWidget {
           final mostUsedService = _mostUsedService(items);
           final Decimal averagePerUser = activeSubscribers == 0
               ? Decimal.zero
-              : (expected / Decimal.fromInt(activeSubscribers)).toDecimal(scaleOnInfinitePrecision: 2);
+              : (expected / Decimal.fromInt(activeSubscribers)).toDecimal(
+                  scaleOnInfinitePrecision: 2,
+                );
 
           return RefreshIndicator(
             onRefresh: () async {
@@ -85,7 +95,12 @@ class DashboardScreen extends ConsumerWidget {
               ref.invalidate(servicesListProvider);
             },
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(Gap.gutter, 8, Gap.gutter, 116),
+              padding: const EdgeInsets.fromLTRB(
+                Gap.gutter,
+                8,
+                Gap.gutter,
+                116,
+              ),
               physics: const AlwaysScrollableScrollPhysics(),
               children: [
                 _CollectionHeroApple(
@@ -95,19 +110,20 @@ class DashboardScreen extends ConsumerWidget {
                   onTap: () => context.go('/history'),
                 ),
                 const SizedBox(height: 24),
-                SectionHeaderArtistic(
+                SectionHeader(
                   title: 'Business pulse',
                   subtitle: 'A clear view of today\'s numbers',
                 ),
                 const SizedBox(height: 10),
-                MinimalCard(
+                SurfaceCard(
                   padding: const EdgeInsets.all(12),
                   child: _MetricGridApple(
                     cards: [
                       _MetricCardDataApple(
                         label: 'Expected revenue',
                         value: _money(expected, amountsHidden),
-                        detail: '${_money(averagePerUser, amountsHidden)} avg. per active user',
+                        detail:
+                            '${_money(averagePerUser, amountsHidden)} avg. per active user',
                         icon: Icons.trending_up_rounded,
                         color: AppColors.primary,
                         onTap: () => context.go('/billing'),
@@ -115,15 +131,20 @@ class DashboardScreen extends ConsumerWidget {
                       _MetricCardDataApple(
                         label: 'Overdue payments',
                         value: _money(overdueTotal, amountsHidden),
-                        detail: '${overdue.length} ${overdue.length == 1 ? 'subscriber' : 'subscribers'} need attention',
+                        detail:
+                            '${overdue.length} ${overdue.length == 1 ? 'subscriber' : 'subscribers'} need attention',
                         icon: Icons.schedule_rounded,
-                        color: overdue.isEmpty ? AppColors.success : AppColors.danger,
+                        color: overdue.isEmpty
+                            ? AppColors.success
+                            : AppColors.danger,
                         onTap: () => context.go('/billing'),
                       ),
                       _MetricCardDataApple(
                         label: 'Services offered',
                         value: '${serviceItems.length}',
-                        detail: mostUsedService == null ? 'No usage data yet' : 'Most used · $mostUsedService',
+                        detail: mostUsedService == null
+                            ? 'No usage data yet'
+                            : 'Most used · $mostUsedService',
                         icon: Icons.layers_rounded,
                         color: AppColors.info,
                         onTap: () => context.go('/services'),
@@ -140,16 +161,19 @@ class DashboardScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                SectionHeaderArtistic(
+                SectionHeader(
                   title: 'Recent activity',
                   subtitle: 'Latest payments recorded',
                   actionLabel: 'See all',
                   onAction: () => context.go('/history'),
                 ),
                 const SizedBox(height: 8),
-                MinimalCard(
+                SurfaceCard(
                   padding: const EdgeInsets.all(12),
-                  child: _RecentActivityApple(payments: payments, hidden: amountsHidden),
+                  child: _RecentActivityApple(
+                    payments: payments,
+                    hidden: amountsHidden,
+                  ),
                 ),
               ],
             ),
@@ -159,10 +183,14 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  static List<Payment> _paymentsThisMonth(AsyncValue<CursorPage<Payment>> payments) {
+  static List<Payment> _paymentsThisMonth(
+    AsyncValue<CursorPage<Payment>> payments,
+  ) {
     final month = BizDate.todayYMD().substring(0, 7);
     return payments.maybeWhen(
-      data: (page) => page.items.where((payment) => payment.paymentDate.startsWith(month)).toList(),
+      data: (page) => page.items
+          .where((payment) => payment.paymentDate.startsWith(month))
+          .toList(),
       orElse: () => const [],
     );
   }
@@ -178,7 +206,8 @@ class DashboardScreen extends ConsumerWidget {
     return counts.entries.reduce((a, b) => a.value >= b.value ? a : b).key;
   }
 
-  static String _money(Decimal value, bool hidden) => hidden ? '••••' : MoneyUtils.formatCompactPKR(value);
+  static String _money(Decimal value, bool hidden) =>
+      hidden ? '••••' : MoneyUtils.formatCompactPKR(value);
 }
 
 class _CollectionHeroApple extends StatelessWidget {
@@ -196,31 +225,25 @@ class _CollectionHeroApple extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = AppColors.onAccent;
     final amountLabel = hidden ? 'hidden' : MoneyUtils.formatPKR(amount);
 
+    final bg = AppColors.surfaceAlt;
     return Semantics(
       button: true,
-      label: 'Collected this month $amountLabel from $subscriberCount subscribers',
+      label:
+          'Collected this month $amountLabel from $subscriberCount subscribers',
       child: InkWell(
         onTap: onTap,
-        borderRadius: AppRadii.rXl,
+        borderRadius: BorderRadius.circular(16),
         child: Container(
-          padding: const EdgeInsets.fromLTRB(20, 20, 18, 18),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: AppColors.primary,
-            borderRadius: AppRadii.rXl,              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.28),
-                  blurRadius: 28,
-                  offset: const Offset(0, 14),
-                ),
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.16),
-                  blurRadius: 48,
-                  offset: const Offset(0, 20),
-                ),
-              ],
+            color: bg,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline
+                  .withValues(alpha: 0.3),
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,40 +251,68 @@ class _CollectionHeroApple extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
-                      color: foreground.withValues(alpha: 0.16),
-                      borderRadius: AppRadii.rPill,
+                      color: AppColors.primary.withValues(alpha: 0.10),
+                      borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
                       'THIS MONTH',
-                      style: AppType.overline.copyWith(color: foreground, letterSpacing: 1.1),
+                      style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.1,
+                      ),
                     ),
                   ),
                   const Spacer(),
-                  Icon(Icons.arrow_outward_rounded, color: foreground, size: 20),
+                  Icon(
+                    Icons.arrow_outward_rounded,
+                    color: AppColors.textSecondary,
+                    size: 20,
+                  ),
                 ],
               ),
-              const SizedBox(height: 20),
-              Text('Collected', style: AppType.body.copyWith(color: foreground.withValues(alpha: 0.78))),
+              const SizedBox(height: 16),
+              Text(
+                'Collected',
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
               const SizedBox(height: 4),
               FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,
                 child: Text(
                   amountLabel,
-                  style: AppType.moneyHero.copyWith(color: foreground, fontSize: 36, height: 1.1),
+                  maxLines: 1,
+                  style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 32,
+                    letterSpacing: -0.03,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
               Row(
                 children: [
-                  Icon(Icons.verified_rounded, color: foreground, size: 16),
+                  Icon(
+                    Icons.verified_rounded,
+                    color: AppColors.success,
+                    size: 16,
+                  ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       '$subscriberCount ${subscriberCount == 1 ? 'subscriber' : 'subscribers'} made a payment',
-                      style: AppType.caption.copyWith(color: foreground.withValues(alpha: 0.84)),
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -284,7 +335,7 @@ class _MetricGridApple extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? AppColors.surface : Colors.white;
+    final cardBg = AppColors.surface;
     final cardBorder = isDark ? AppColors.outline : AppColors.outlineSoft;
 
     return Container(
@@ -332,7 +383,9 @@ class _MetricCardApple extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark ? AppColors.surface : Colors.white,
           borderRadius: AppRadii.rLg,
-          border: Border.all(color: isDark ? AppColors.outline : AppColors.outlineSoft),
+          border: Border.all(
+            color: isDark ? AppColors.outline : AppColors.outlineSoft,
+          ),
           boxShadow: isDark
               ? [
                   BoxShadow(
@@ -368,7 +421,9 @@ class _MetricCardApple extends StatelessWidget {
             const SizedBox(height: 3),
             Text(
               data.detail,
-              style: AppType.overline.copyWith(color: isDark ? AppColors.textTertiary : AppColors.textTertiary),
+              style: AppType.overline.copyWith(
+                color: isDark ? AppColors.textTertiary : AppColors.textTertiary,
+              ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -421,16 +476,23 @@ class _RecentActivityApple extends StatelessWidget {
         final latest = page.items.take(3).toList();
         return Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).brightness == Brightness.dark ? AppColors.surface : Colors.white,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? AppColors.surface
+                : Colors.white,
             borderRadius: AppRadii.rLg,
             border: Border.all(
-              color: Theme.of(context).brightness == Brightness.dark ? AppColors.outline : AppColors.outlineSoft,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? AppColors.outline
+                  : AppColors.outlineSoft,
             ),
           ),
           child: Column(
             children: [
               for (var index = 0; index < latest.length; index++) ...[
-                _PaymentActivityRowApple(payment: latest[index], hidden: hidden),
+                _PaymentActivityRowApple(
+                  payment: latest[index],
+                  hidden: hidden,
+                ),
                 if (index != latest.length - 1) const Divider(height: 1),
               ],
             ],
@@ -450,7 +512,9 @@ class _PaymentActivityRowApple extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final subtitleColor = isDark ? AppColors.textTertiary : AppColors.textTertiary;
+    final subtitleColor = isDark
+        ? AppColors.textTertiary
+        : AppColors.textTertiary;
 
     return InkWell(
       onTap: () => context.push('/payments/${payment.id}'),
@@ -466,7 +530,11 @@ class _PaymentActivityRowApple extends StatelessWidget {
                 color: AppColors.success.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.check_rounded, color: AppColors.success, size: 18),
+              child: Icon(
+                Icons.check_rounded,
+                color: AppColors.success,
+                size: 18,
+              ),
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -491,7 +559,9 @@ class _PaymentActivityRowApple extends StatelessWidget {
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                hidden ? '••••' : MoneyUtils.formatCompactPKR(payment.finalAmount),
+                hidden
+                    ? '••••'
+                    : MoneyUtils.formatCompactPKR(payment.finalAmount),
                 style: AppType.label.copyWith(color: AppColors.success),
               ),
             ),
@@ -518,7 +588,9 @@ class _ActivitySkeletonApple extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColors.surface : Colors.white,
         borderRadius: AppRadii.rLg,
-        border: Border.all(color: isDark ? AppColors.outline : AppColors.outlineSoft),
+        border: Border.all(
+          color: isDark ? AppColors.outline : AppColors.outlineSoft,
+        ),
       ),
       child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
     );
@@ -536,7 +608,9 @@ class _ActivityMessageApple extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? AppColors.surfaceAlt : Colors.white;
     final borderColor = isDark ? AppColors.outline : AppColors.outline;
-    final textColor = isDark ? AppColors.textSecondary : AppColors.textSecondary;
+    final textColor = isDark
+        ? AppColors.textSecondary
+        : AppColors.textSecondary;
 
     return Container(
       width: double.infinity,
@@ -551,10 +625,7 @@ class _ActivityMessageApple extends StatelessWidget {
           Icon(icon, color: AppColors.textTertiary, size: 20),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(
-              text,
-              style: AppType.body.copyWith(color: textColor),
-            ),
+            child: Text(text, style: AppType.body.copyWith(color: textColor)),
           ),
         ],
       ),

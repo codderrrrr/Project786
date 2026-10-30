@@ -17,7 +17,12 @@ class SaasScreen extends StatelessWidget {
       'ACTIVE',
       'Everything works',
       'active',
-      ['Collect payments', 'Add and edit subscribers', 'Change schedules', 'Generate receipts'],
+      [
+        'Collect payments',
+        'Add and edit subscribers',
+        'Change schedules',
+        'Generate receipts',
+      ],
       [],
     ),
     (
@@ -67,10 +72,7 @@ class SaasScreen extends StatelessWidget {
                 const SizedBox(height: 6),
                 Row(
                   children: [
-                    const StatusPill(
-                      label: 'Active',
-                      tone: PillTone.success,
-                    ),
+                    const StatusPill(label: 'Active', tone: PillTone.success),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
@@ -130,7 +132,8 @@ class _StateCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: '$name. $description. ${allowed.length} allowed, ${blocked.length} blocked.',
+      label:
+          '$name. $description. ${allowed.length} allowed, ${blocked.length} blocked.',
       container: true,
       child: Container(
         padding: const EdgeInsets.all(14),
@@ -146,57 +149,79 @@ class _StateCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          // Wrap, not Row: at large system text sizes the badges drop onto a
-          // second line instead of being clipped.
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              StatusPill.fromStatus(status),
-              if (isCurrent)
-                Text(
-                  'Current',
-                  style: AppType.caption.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w600,
+            // Wrap, not Row: at large system text sizes the badges drop onto a
+            // second line instead of being clipped.
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                StatusPill.fromStatus(status),
+                if (isCurrent)
+                  Text(
+                    'Current',
+                    style: AppType.caption.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(description, style: AppType.body),
+            const SizedBox(height: 12),
+            for (final a in allowed)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 2),
+                      child: Icon(
+                        Icons.check_rounded,
+                        size: 14,
+                        color: AppColors.success,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        a,
+                        style: AppType.caption.copyWith(
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(description, style: AppType.body),
-          const SizedBox(height: 12),
-          for (final a in allowed)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 6),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 2),
-                    child: Icon(Icons.check_rounded, size: 14, color: AppColors.success),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(child: Text(a, style: AppType.caption.copyWith(color: AppColors.textPrimary))),
-                ],
               ),
-            ),
-          for (final b in blocked)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 6),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 2),
-                    child: Icon(Icons.remove_circle_outline_rounded, size: 14, color: AppColors.danger),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(child: Text(b, style: AppType.caption.copyWith(color: AppColors.textPrimary))),
-                ],
+            for (final b in blocked)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 2),
+                      child: Icon(
+                        Icons.remove_circle_outline_rounded,
+                        size: 14,
+                        color: AppColors.danger,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        b,
+                        style: AppType.caption.copyWith(
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),

@@ -9,8 +9,7 @@ import 'package:subscription_saas_flutter/core/money/money.dart';
 import 'package:subscription_saas_flutter/core/widgets/app_scaffold.dart';
 import 'package:subscription_saas_flutter/core/widgets/state_widgets.dart';
 import 'package:subscription_saas_flutter/core/widgets/surface_rows.dart';
-import 'package:subscription_saas_flutter/core/widgets/creative/aurora_card.dart';
-import 'package:subscription_saas_flutter/core/widgets/creative/minimal_card.dart';
+import 'package:subscription_saas_flutter/core/components/surface_card.dart';
 import 'package:subscription_saas_flutter/features/payments/data/providers/payments_providers.dart';
 import 'package:subscription_saas_flutter/features/payments/domain/models/payment.dart';
 
@@ -189,7 +188,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
               Gap.gutter,
               8,
             ),
-            child: MinimalCard(
+            child: SurfaceCard(
               padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
@@ -199,7 +198,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                       onTap: () async {
                         final d = await showDatePicker(
                           context: context,
-                          initialDate: DateTime.tryParse(_startDate) ?? DateTime.now(),
+                          initialDate:
+                              DateTime.tryParse(_startDate) ?? DateTime.now(),
                           firstDate: DateTime(2020),
                           lastDate: DateTime.now(),
                         );
@@ -213,7 +213,11 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                           labelText: 'Start date',
                           border: OutlineInputBorder(),
                         ),
-                        child: Text(_startController.text.isEmpty ? 'YYYY-MM-DD' : _startController.text),
+                        child: Text(
+                          _startController.text.isEmpty
+                              ? 'YYYY-MM-DD'
+                              : _startController.text,
+                        ),
                       ),
                     ),
                   ),
@@ -224,7 +228,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                       onTap: () async {
                         final d = await showDatePicker(
                           context: context,
-                          initialDate: DateTime.tryParse(_endDate) ?? DateTime.now(),
+                          initialDate:
+                              DateTime.tryParse(_endDate) ?? DateTime.now(),
                           firstDate: DateTime(2020),
                           lastDate: DateTime.now(),
                         );
@@ -238,7 +243,11 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                           labelText: 'End date',
                           border: OutlineInputBorder(),
                         ),
-                        child: Text(_endController.text.isEmpty ? 'YYYY-MM-DD' : _endController.text),
+                        child: Text(
+                          _endController.text.isEmpty
+                              ? 'YYYY-MM-DD'
+                              : _endController.text,
+                        ),
                       ),
                     ),
                   ),

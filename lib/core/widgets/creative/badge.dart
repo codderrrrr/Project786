@@ -9,22 +9,24 @@ class Badge extends StatelessWidget {
   const Badge({
     super.key,
     required this.count,
-    this.color = AppColors.primary,
+    this.color,
     this.size = 16,
   });
 
   final int count;
-  final Color color;
+  /// Resolved in build: `AppColors.primary` is a getter and cannot be a const default.
+  final Color? color;
   final double size;
 
   @override
   Widget build(BuildContext context) {
+    final effectiveColor = color ?? AppColors.primary;
     if (count <= 0) return const SizedBox.shrink();
     return RepaintBoundary(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
-          color: color,
+          color: effectiveColor,
           borderRadius: AppRadii.rPill,
         ),
         child: Text(

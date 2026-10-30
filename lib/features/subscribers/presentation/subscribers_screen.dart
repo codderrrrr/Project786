@@ -8,12 +8,12 @@ import 'package:subscription_saas_flutter/app/theme/app_radii.dart';
 import 'package:subscription_saas_flutter/app/theme/app_type.dart';
 import 'package:subscription_saas_flutter/core/widgets/animated_reveal.dart';
 import 'package:subscription_saas_flutter/core/widgets/app_scaffold.dart';
+import 'package:subscription_saas_flutter/core/widgets/section_header.dart';
 import 'package:subscription_saas_flutter/core/widgets/dialogs.dart';
 import 'package:subscription_saas_flutter/core/widgets/filter_bar.dart';
 import 'package:subscription_saas_flutter/core/widgets/initials_avatar.dart';
 import 'package:subscription_saas_flutter/core/widgets/search_field.dart';
-import 'package:subscription_saas_flutter/core/widgets/creative/section_header_artistic.dart';
-import 'package:subscription_saas_flutter/core/widgets/creative/aurora_card.dart';
+import 'package:subscription_saas_flutter/core/components/surface_card.dart';
 import 'package:subscription_saas_flutter/core/widgets/state_widgets.dart';
 import 'package:subscription_saas_flutter/core/widgets/status_pill.dart';
 import 'package:subscription_saas_flutter/core/widgets/surface_rows.dart';
@@ -121,7 +121,11 @@ class _SubscriberRow extends ConsumerWidget {
 }
 
 /// Shows quick actions sheet for a subscriber (long press).
-void _showQuickActions(BuildContext context, WidgetRef ref, Subscriber subscriber) {
+void _showQuickActions(
+  BuildContext context,
+  WidgetRef ref,
+  Subscriber subscriber,
+) {
   showAppSheet<void>(
     context,
     title: subscriber.name,
@@ -164,8 +168,7 @@ void _showQuickActions(BuildContext context, WidgetRef ref, Subscriber subscribe
                     title: 'Deactivate ${subscriber.name}?',
                     message:
                         'They stay in your records and their history is kept.',
-                    consequence:
-                        'Existing subscriptions keep running — deactivating does not cancel them or delete payments.',
+                    consequence: 'Existing subscriptions keep running — deactivating does not cancel them or delete payments.',
                     confirmLabel: 'Deactivate',
                     destructive: true,
                   );
@@ -201,9 +204,7 @@ Future<Subscriber?> _openAddSubscriberScreen(
 ) async {
   // Navigate to a new screen instead of using a bottom sheet
   final result = await Navigator.of(context).push<Subscriber>(
-    MaterialPageRoute(
-      builder: (context) => const _AddSubscriberForm(),
-    ),
+    MaterialPageRoute(builder: (context) => const _AddSubscriberForm()),
   );
   return result;
 }
@@ -269,126 +270,128 @@ class _AddSubscriberFormState extends ConsumerState<_AddSubscriberForm> {
           child: Form(
             key: _formKey,
             child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Name field
-              Text(
-                'Name*',
-                style: AppType.label.copyWith(fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(height: 4),
-              AuroraCard(
-                padding: const EdgeInsets.all(8),
-                glow: true,
-                child: TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter subscriber name',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Name is required';
-                    }
-                    return null;
-                  },
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Name field
+                Text(
+                  'Name*',
+                  style: AppType.label.copyWith(fontWeight: FontWeight.w500),
                 ),
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 4),
+                SurfaceCard(
+                  padding: const EdgeInsets.all(8),
 
-              // Phone field
-              Text(
-                'Phone*',
-                style: AppType.label.copyWith(fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(height: 4),
-              AuroraCard(
-                padding: const EdgeInsets.all(8),
-                glow: true,
-                child: TextFormField(
-                  controller: _phoneController,
-                  decoration: const InputDecoration(
-                    hintText: '+923001234567',
-                    border: OutlineInputBorder(),
+                  child: TextFormField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter subscriber name',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Name is required';
+                      }
+                      return null;
+                    },
                   ),
-                  keyboardType: TextInputType.phone,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Phone is required';
-                    }
-                    final cleaned = value.replaceAll(RegExp(r'\s+'), '');
-                    if (!RegExp(r'^\+92\d{10}$').hasMatch(cleaned)) {
-                      return 'Use Pakistan format: +921234567890';
-                    }
-                    return null;
-                  },
                 ),
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // CNIC (optional)
-              Text(
-                'CNIC (optional)',
-                style: AppType.label.copyWith(fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(height: 4),
-              AuroraCard(
-                padding: const EdgeInsets.all(8),
-                glow: true,
-                child: TextFormField(
-                  controller: _cnicController,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter CNIC (optional)',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.text,
-                  validator: (value) {
-                    final cnic = value?.replaceAll(RegExp(r'[-\s]'), '') ?? '';
-                    if (cnic.isNotEmpty && !RegExp(r'^\d{13}$').hasMatch(cnic)) {
-                      return 'Enter 13 digits or leave CNIC empty';
-                    }
-                    return null;
-                  },
+                // Phone field
+                Text(
+                  'Phone*',
+                  style: AppType.label.copyWith(fontWeight: FontWeight.w500),
                 ),
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 4),
+                SurfaceCard(
+                  padding: const EdgeInsets.all(8),
 
-              // Service dropdown
-              Text(
-                'Service*',
-                style: AppType.label.copyWith(fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(height: 4),
-              AuroraCard(
-                padding: const EdgeInsets.all(8),
-                glow: true,
-                child: DropdownButtonFormField<String>(
-                  initialValue: _selectedService,
-                  hint: const Text('Select a service'),
-                  items: services.when(
-                    data: (list) => list.items
-                        .map(
-                          (service) => DropdownMenuItem<String>(
-                            value: service.id,
-                            child: Text(service.name),
-                          ),
-                        )
-                        .toList(),
-                    loading: () => const [],
-                    error: (_, _) => const [],
+                  child: TextFormField(
+                    controller: _phoneController,
+                    decoration: const InputDecoration(
+                      hintText: '+923001234567',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.phone,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Phone is required';
+                      }
+                      final cleaned = value.replaceAll(RegExp(r'\s+'), '');
+                      if (!RegExp(r'^\+92\d{10}$').hasMatch(cleaned)) {
+                        return 'Use Pakistan format: +921234567890';
+                      }
+                      return null;
+                    },
                   ),
-                  onChanged: (String? newValue) {
-                    setState(() => _selectedService = newValue);
-                  },
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Service is required';
-                    }
-                    return null;
-                  },
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+
+                // CNIC (optional)
+                Text(
+                  'CNIC (optional)',
+                  style: AppType.label.copyWith(fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 4),
+                SurfaceCard(
+                  padding: const EdgeInsets.all(8),
+
+                  child: TextFormField(
+                    controller: _cnicController,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter CNIC (optional)',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.text,
+                    validator: (value) {
+                      final cnic =
+                          value?.replaceAll(RegExp(r'[-\s]'), '') ?? '';
+                      if (cnic.isNotEmpty &&
+                          !RegExp(r'^\d{13}$').hasMatch(cnic)) {
+                        return 'Enter 13 digits or leave CNIC empty';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Service dropdown
+                Text(
+                  'Service*',
+                  style: AppType.label.copyWith(fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 4),
+                SurfaceCard(
+                  padding: const EdgeInsets.all(8),
+
+                  child: DropdownButtonFormField<String>(
+                    initialValue: _selectedService,
+                    hint: const Text('Select a service'),
+                    items: services.when(
+                      data: (list) => list.items
+                          .map(
+                            (service) => DropdownMenuItem<String>(
+                              value: service.id,
+                              child: Text(service.name),
+                            ),
+                          )
+                          .toList(),
+                      loading: () => const [],
+                      error: (_, _) => const [],
+                    ),
+                    onChanged: (String? newValue) {
+                      setState(() => _selectedService = newValue);
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Service is required';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -434,7 +437,9 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
     setState(() => _visibleLetter = letter);
     // Find the first visible row whose name starts with this letter and
     // scroll it into view.
-    final subs = ref.read(subscribersListProvider(_query.isEmpty ? null : _query));
+    final subs = ref.read(
+      subscribersListProvider(_query.isEmpty ? null : _query),
+    );
     subs.whenData((page) {
       final match = page.items.where((s) {
         final passesFilter = switch (_filter) {
@@ -445,8 +450,9 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
         return passesFilter &&
             s.name.trimLeft().toUpperCase().startsWith(letter);
       }).firstOrNull;
-      final rowContext =
-          match == null ? null : _rowKeys[match.id]?.currentContext;
+      final rowContext = match == null
+          ? null
+          : _rowKeys[match.id]?.currentContext;
       if (rowContext != null) {
         Scrollable.ensureVisible(
           rowContext,
@@ -479,9 +485,9 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(Gap.gutter, 0, Gap.gutter, 12),
-            child: AuroraCard(
+            child: SurfaceCard(
               padding: const EdgeInsets.all(8),
-              glow: true,
+
               child: AppSearchField(
                 hintText: 'Search name or phone number',
                 onChanged: (v) => setState(() => _query = v),
@@ -493,10 +499,15 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
               final active = page.items.where((s) => s.active).length;
               final inactive = page.items.length - active;
               return Padding(
-                padding: const EdgeInsets.fromLTRB(Gap.gutter, 0, Gap.gutter, 12),
-                child: AuroraCard(
+                padding: const EdgeInsets.fromLTRB(
+                  Gap.gutter,
+                  0,
+                  Gap.gutter,
+                  12,
+                ),
+                child: SurfaceCard(
                   padding: const EdgeInsets.all(8),
-                  glow: true,
+
                   child: FilterBar(
                     selectedId: _filter,
                     semanticLabel: 'Filter subscribers by status',
@@ -506,9 +517,21 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
                       '${page.items.length} ${page.items.length == 1 ? 'person' : 'people'}',
                     ),
                     options: [
-                      FilterOption(id: 'all', label: 'All', count: page.items.length),
-                      FilterOption(id: 'active', label: 'Active', count: active),
-                      FilterOption(id: 'inactive', label: 'Inactive', count: inactive),
+                      FilterOption(
+                        id: 'all',
+                        label: 'All',
+                        count: page.items.length,
+                      ),
+                      FilterOption(
+                        id: 'active',
+                        label: 'Active',
+                        count: active,
+                      ),
+                      FilterOption(
+                        id: 'inactive',
+                        label: 'Inactive',
+                        count: inactive,
+                      ),
                     ],
                   ),
                 ),
@@ -558,7 +581,7 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
                   Gap.pageInset.bottom,
                 ),
                 children: [
-                  SectionHeaderArtistic(
+                  SectionHeader(
                     title: 'Subscribers',
                     subtitle: 'Long-press a row for quick actions',
                   ),
